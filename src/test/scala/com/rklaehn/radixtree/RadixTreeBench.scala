@@ -23,7 +23,11 @@ object RadixTreeBench extends App {
 
   val kvs = names.map(s => s -> (()))
 
+  val kvsc = names.map(s => s.toCharArray -> (()))
+
   val radixTree = RadixTree(kvs: _*).packed
+
+  val radixTreeC = RadixTree(kvsc: _*).packed
 
   val sortedMap = SortedMap(kvs: _*)
 

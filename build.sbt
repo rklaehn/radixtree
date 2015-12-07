@@ -77,5 +77,23 @@ lazy val radixtree = crossProject.crossType(CrossType.Pure).in(file("."))
   .settings(name := "radixtree")
   .settings(radixtreeSettings: _*)
 
+lazy val radixtreeInstrumentedTest = project.in(file("instrumented-test"))
+  .settings(name := "radixtreeInstrumentedTest")
+  .settings(radixtreeSettings: _*)
+  .settings(instrumentedTestSettings: _*)
+  .dependsOn(radixtreeJVM)
+
+lazy val instrumentedTestSettings = {
+  def makeAgentOptions(classpath:Classpath) : String = {
+    val jammJar = classpath.map(_.data).filter(_.toString.contains("jamm")).head
+    s"-javaagent:$jammJar"
+  }
+  Seq(
+    javaOptions in Test <+= (dependencyClasspath in Test).map(makeAgentOptions),
+      libraryDependencies += "com.github.jbellis" % "jamm" % "0.3.0" % "test",
+      fork := true
+    )
+}
+
 lazy val radixtreeJVM = radixtree.jvm
 lazy val radixtreeJS = radixtree.js

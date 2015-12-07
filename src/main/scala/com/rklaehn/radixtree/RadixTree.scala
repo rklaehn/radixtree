@@ -21,9 +21,14 @@ final class RadixTree[K, V](
     children.asInstanceOf[Array[AnyRef]]
 
   def packed: RadixTree[K, V] = {
-    val memo = new scala.collection.mutable.AnyRefMap[RadixTree[K, V], RadixTree[K, V]]
-    lazy val pack0: RadixTree[K, V] => RadixTree[K, V] = { tree =>
-      memo.getOrElseUpdate(tree, tree.copy(children = tree.children.map(pack0)))
+    import spire.optional._
+    val kMemo = Memo.simple[K](e, e)
+    val vMemo = Memo.simple[V](e.valueEq, e.valueHashing)
+    val nodeMemo = Memo.simple[RadixTree[K, V]](genericEq.generic, Hashing.default)
+    lazy val pack0: RadixTree[K, V] => RadixTree[K, V] = {
+      tree: RadixTree[K, V] =>
+        val tree1 = tree.copy(prefix = kMemo(tree.prefix), valueOpt = tree.valueOpt.map(vMemo), children = tree.children.map(pack0))
+        nodeMemo(tree1)
     }
     pack0(this)
   }

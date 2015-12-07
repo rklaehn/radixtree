@@ -11,25 +11,29 @@ class RadixTreeTest extends FunSuite {
     def toBytes = underlying.getBytes("UTF-8")
   }
 
-  lazy val kvs = (0 until 100).map(i => i.toString -> i)
+  val kvs = (0 until 100).map(i => i.toString -> i)
 
-  lazy val kvs1k = (0 to 1000).map(i => i.toString -> i)
+  val kvs1k = (0 to 1000).map(i => i.toString -> i)
 
-  lazy val tree = RadixTree(kvs: _*)
+  val tree = RadixTree(kvs: _*)
 
-  lazy val tree1k = RadixTree(kvs1k: _*)
+  val tree1k = RadixTree(kvs1k: _*)
 
-  lazy val bkvs = (0 until 100).map(i => i.toString.toBytes -> i.toString.toBytes)
+  val bkvs = (0 until 100).map(i => i.toString.toBytes -> i.toString.toBytes)
 
-  lazy val btree = RadixTree(bkvs: _*)
+  val btree = RadixTree(bkvs: _*)
 
-  lazy val bkvs1k = (0 to 1000).map(i => i.toString.toBytes -> i.toString.toBytes)
+  val ckvs = (0 until 100).map(i => i.toString.toCharArray -> i.toString.toCharArray)
 
-  lazy val btree1k = RadixTree(bkvs1k: _*)
+  val ctree = RadixTree(ckvs: _*)
 
-  lazy val textkvs = (0 until 1000).map(x => NumberToWord(x) -> x)
+  val bkvs1k = (0 to 1000).map(i => i.toString.toBytes -> i.toString.toBytes)
 
-  lazy val texttree = RadixTree(textkvs: _*)
+  val btree1k = RadixTree(bkvs1k: _*)
+
+  val textkvs = (0 until 1000).map(x => NumberToWord(x) -> x)
+
+  val texttree = RadixTree(textkvs: _*)
 
   def testCreate[K, V](kvs: (K, V)*)(implicit f: RadixTree.Family[K, V]): Unit = {
     val tree = RadixTree(kvs: _*)
@@ -46,6 +50,8 @@ class RadixTreeTest extends FunSuite {
 
   def testHashCode[K, V](kvs: (K, V)*)(implicit f: RadixTree.Family[K, V]): Unit = {
     assert(RadixTree(kvs: _*).hashCode === RadixTree(kvs.reverse: _*).hashCode)
+    assert(RadixTree(bkvs: _*).hashCode === RadixTree(bkvs.reverse: _*).hashCode)
+    assert(RadixTree(ckvs: _*).hashCode === RadixTree(ckvs.reverse: _*).hashCode)
   }
 
   def testGeneric[K, V](kvs: (K, V)*)(implicit f: RadixTree.Family[K, V]): Unit = {
@@ -111,11 +117,8 @@ class RadixTreeTest extends FunSuite {
 
   test("pairs") {
     assert(kvs.toSet === tree.pairs.toSet)
-  }
-
-  test("pairsByteArray") {
-    import spire.implicits._
     assert(Eq[Array[(Array[Byte], Array[Byte])]].eqv(btree.pairs.toArray, RadixTree(bkvs: _*).pairs.toArray))
+    assert(Eq[Array[(Array[Char], Array[Char])]].eqv(ctree.pairs.toArray, RadixTree(ckvs: _*).pairs.toArray))
   }
 
   test("packed") {

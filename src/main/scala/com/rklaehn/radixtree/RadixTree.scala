@@ -534,41 +534,41 @@ object RadixTree {
       java.util.Arrays.hashCode(e)
   }
 
-//  implicit def charArrayIsKey[V: Eq]: Family[Array[Char], V] =
-//    new CharArrayTreeFamily[V](implicitly[Eq[V]], implicitly[Hashing[V]])
-//
-//  private final class CharArrayTreeFamily[V](val valueEq: Eq[V], val valueHashing: Hashing[V])
-//      extends Family[Array[Char], V] {
-//
-//    override def empty: Array[Char] =
-//      emptyTree.prefix
-//
-//    override val emptyTree: RadixTree[Array[Char], V] =
-//      new RadixTree[Array[Char], V](Array.empty, Array.empty, Opt.empty)(this)
-//
-//    override def size(c: Array[Char]): Int =
-//      c.length
-//
-//    override def substring(a: Array[Char], from: Int, until: Int): Array[Char] =
-//      a.slice(from, until)
-//
-//    @tailrec
-//    override def indexOfFirstDifference(a: Array[Char], ai: Int, b: Array[Char], bi: Int, count: Int): Int =
-//      if (count == 0 || a(ai) != b(bi)) ai
-//      else indexOfFirstDifference(a, ai + 1, b, bi + 1, count - 1)
-//
-//    override def concat(a: Array[Char], b: Array[Char]): Array[Char] =
-//      a ++ b
-//
-//    override def intern(s: Array[Char]): Array[Char] = s
-//
-//    override def compareAt(a: Array[Char], ai: Int, b: Array[Char], bi: Int): Int =
-//      a(ai) compare b(bi)
-//
-//    override def eqv(a: Array[Char], b: Array[Char]): Boolean =
-//      java.util.Arrays.equals(a, b)
-//
-//    override def hash(e: Array[Char]): Int =
-//      java.util.Arrays.hashCode(e)
-//  }
+  implicit def charArrayIsKey[V: Eq]: Family[Array[Char], V] =
+    new CharArrayTreeFamily[V](implicitly[Eq[V]], implicitly[Hashing[V]])
+
+  private final class CharArrayTreeFamily[V](val valueEq: Eq[V], val valueHashing: Hashing[V])
+      extends Family[Array[Char], V] {
+
+    override def empty: Array[Char] =
+      emptyTree.prefix
+
+    override val emptyTree: RadixTree[Array[Char], V] =
+      new RadixTree[Array[Char], V](Array.empty, Array.empty, Opt.empty)(this)
+
+    override def size(c: Array[Char]): Int =
+      c.length
+
+    override def substring(a: Array[Char], from: Int, until: Int): Array[Char] =
+      a.slice(from, until)
+
+    @tailrec
+    override def indexOfFirstDifference(a: Array[Char], ai: Int, b: Array[Char], bi: Int, count: Int): Int =
+      if (count == 0 || a(ai) != b(bi)) ai
+      else indexOfFirstDifference(a, ai + 1, b, bi + 1, count - 1)
+
+    override def concat(a: Array[Char], b: Array[Char]): Array[Char] =
+      a ++ b
+
+    override def intern(s: Array[Char]): Array[Char] = s
+
+    override def compareAt(a: Array[Char], ai: Int, b: Array[Char], bi: Int): Int =
+      a(ai) compare b(bi)
+
+    override def eqv(a: Array[Char], b: Array[Char]): Boolean =
+      java.util.Arrays.equals(a, b)
+
+    override def hash(e: Array[Char]): Int =
+      java.util.Arrays.hashCode(e)
+  }
 }

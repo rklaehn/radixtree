@@ -1,0 +1,9 @@
+#IDEA
+.idea
+.idea_modules
+
+#SBT
+target/
+
+#Private tokens
+*.token

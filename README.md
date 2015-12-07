@@ -47,4 +47,8 @@ SortedMap and HashMap. Filtering by prefix will also benefit a lot from structur
 ### Lookup
 
 Successful lookup is O(k), where k is the number of elements in the key. Hashtable lookup is O(k) as well. Even if the
-hashcode matches, the key to be looked up has to be compared with the key in the hash map, which is O(k). 
+hashcode matches, the key to be looked up has to be compared with the key in the hash map, which is O(k).
+
+### Contains
+
+Filters keys containing a substring

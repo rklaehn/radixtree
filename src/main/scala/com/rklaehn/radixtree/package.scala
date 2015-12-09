@@ -4,7 +4,7 @@ package object radixtree {
 
   import scala.reflect.ClassTag
 
-  implicit class ArrayOps[T](private val underlying: Array[T]) extends AnyVal {
+  private[radixtree] implicit class ArrayOps[T](private val underlying: Array[T]) extends AnyVal {
 
     def updated(index: Int, value: T): Array[T] = {
       val result = underlying.clone

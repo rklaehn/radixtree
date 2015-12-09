@@ -6,28 +6,26 @@ import com.rklaehn.sonicreducer.Reducer
 
 import scala.annotation.tailrec
 import scala.collection.AbstractTraversable
-import scala.reflect.ClassTag
 import scala.util.hashing.Hashing
 
 // scalastyle:off equals.hash.code
 final class RadixTree[K, V](
-    val prefix: K, private[radixtree] val children: Array[RadixTree[K, V]], val valueOpt: Opt[V]
-)(
-    implicit
+    val prefix: K, private[radixtree] val children: Array[RadixTree[K, V]], private val valueOpt: Opt[V]
+  )(implicit
     e: RadixTree.Family[K, V]
-) {
+  ) {
 
   private def childrenAsAnyRefArray =
     children.asInstanceOf[Array[AnyRef]]
 
   def packed: RadixTree[K, V] = {
     import spire.optional._
-    val kMemo = Memo.simple[K](e, e)
-    val vMemo = Memo.simple[V](e.valueEq, e.valueHashing)
+    val keyMemo = Memo.simple[K](e, e)
+    val valueMemo = Memo.simple[V](e.valueEq, e.valueHashing)
     val nodeMemo = Memo.simple[RadixTree[K, V]](genericEq.generic, Hashing.default)
     lazy val pack0: RadixTree[K, V] => RadixTree[K, V] = {
       tree: RadixTree[K, V] =>
-        val tree1 = tree.copy(prefix = kMemo(tree.prefix), valueOpt = tree.valueOpt.map(vMemo), children = tree.children.map(pack0))
+        val tree1 = tree.copy(prefix = keyMemo(tree.prefix), valueOpt = tree.valueOpt.map(valueMemo), children = tree.children.map(pack0))
         nodeMemo(tree1)
     }
     pack0(this)

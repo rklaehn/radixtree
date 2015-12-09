@@ -16,7 +16,7 @@ private object Memo {
     }
   }
 
-  private final case class Element[A](value: A)(implicit e: Eq[A], h: Hashing[A]) {
+  final case class Element[A](value: A)(implicit e: Eq[A], h: Hashing[A]) {
 
     override def equals(that: Any): Boolean = that match {
       case that: Element[A] => e.eqv(this.value, that.value)

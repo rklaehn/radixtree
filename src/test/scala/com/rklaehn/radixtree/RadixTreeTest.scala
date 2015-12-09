@@ -184,4 +184,9 @@ class RadixTreeTest extends FunSuite {
     )
     assert(1 === RadixTree("abcd".toBytes -> 1).filterKeysContaining("bcd".toBytes).count)
   }
+
+  test("memo") {
+    val x = Memo.Element[Int](3)
+    assert(!(x === "foo"))
+  }
 }

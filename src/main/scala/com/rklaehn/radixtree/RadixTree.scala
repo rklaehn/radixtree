@@ -1,7 +1,6 @@
 package com.rklaehn.radixtree
 
 import spire.algebra.Eq
-import spire.util.Opt
 import com.rklaehn.sonicreducer.Reducer
 
 import scala.annotation.tailrec
@@ -156,10 +155,10 @@ final class RadixTree[K, V](
       e.emptyTree
   }
 
-  def modifyOrRemove(f: (K, V, Int) => Opt[V]): RadixTree[K, V] =
+  def modifyOrRemove(f: (K, V, Int) => Option[V]): RadixTree[K, V] =
     modifyOrRemove0(f, e.empty)
 
-  private def modifyOrRemove0(f: (K, V, Int) => Opt[V], prefix: K): RadixTree[K, V] = {
+  private def modifyOrRemove0(f: (K, V, Int) => Option[V], prefix: K): RadixTree[K, V] = {
     val newPrefix = e.concat(prefix, this.prefix)
     val builder = Array.newBuilder[RadixTree[K, V]]
     builder.sizeHint(children.length)
@@ -172,7 +171,7 @@ final class RadixTree[K, V](
     val children1 =
       if (children.length == temp.length && children.corresponds(temp)(_ eq _)) children
       else temp
-    val valueOpt1 = if (valueOpt.isDefined) f(newPrefix, valueOpt.get, children1.length) else Opt.empty
+    val valueOpt1 = if (valueOpt.isDefined) Opt.fromOption(f(newPrefix, valueOpt.get, children1.length)) else Opt.empty
     copy(children = children1, valueOpt = valueOpt1)
   }
 
@@ -219,11 +218,11 @@ final class RadixTree[K, V](
   def merge(other: RadixTree[K, V], collision: (V, V) => V): RadixTree[K, V] =
     merge0(other, 0, collision)
 
-  def apply(key: K) = get(key).get
+  def apply(key: K) = get0(key, 0).get
 
-  def contains(key: K) = get(key).isDefined
+  def contains(key: K) = get0(key, 0).isDefined
 
-  def get(key: K): Opt[V] = get0(key, 0)
+  def get(key: K): Option[V] = get0(key, 0).toOption
 
   @tailrec
   private def get0(key: K, offset: Int): Opt[V] =
@@ -429,7 +428,7 @@ object RadixTree {
     final def mergeChildren(a: Array[RadixTree[K, V]], b: Array[RadixTree[K, V]], f: (V, V) => V): Array[RadixTree[K, V]] = {
       val r = new Array[RadixTree[K, V]](a.length + b.length)
       var ri: Int = 0
-      new spire.math.BinaryMerge {
+      new BinaryMerge {
 
         def compare(ai: Int, bi: Int) = compareAt(a(ai).prefix, 0, b(bi).prefix, 0)
 

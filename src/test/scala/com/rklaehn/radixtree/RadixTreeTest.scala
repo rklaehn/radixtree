@@ -2,7 +2,6 @@ package com.rklaehn.radixtree
 
 import org.scalatest.FunSuite
 import spire.algebra.Eq
-import spire.util.Opt
 import spire.implicits._
 
 class RadixTreeTest extends FunSuite {
@@ -41,6 +40,7 @@ class RadixTreeTest extends FunSuite {
     for ((k, v) <- kvs) {
       assert(tree.contains(k))
       assert(f.valueEq.eqv(v, tree(k)))
+      assert(f.valueEq.eqv(v, tree.get(k).get))
     }
   }
 
@@ -140,8 +140,8 @@ class RadixTreeTest extends FunSuite {
   }
 
   test("modifyOrRemove") {
-    val tree1 = tree.modifyOrRemove { case (k, v, _) => Opt(v * 2) }
-    val tree2 = tree.modifyOrRemove { case (k, v, _) => Opt.empty }
+    val tree1 = tree.modifyOrRemove { case (k, v, _) => Some(v * 2) }
+    val tree2 = tree.modifyOrRemove { case (k, v, _) => None }
     for ((k, v) <- kvs)
       assert(v * 2 === tree1(k))
     assert(tree2.isEmpty)
@@ -188,5 +188,12 @@ class RadixTreeTest extends FunSuite {
   test("memo") {
     val x = Memo.Element[Int](3)
     assert(!(x === "foo"))
+  }
+
+  test("opt") {
+    intercept[NoSuchElementException] {
+      Opt.empty[Int].get
+    }
+    assert(Opt.empty[Int].toOption.isEmpty)
   }
 }

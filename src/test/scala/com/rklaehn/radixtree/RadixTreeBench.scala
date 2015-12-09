@@ -17,7 +17,7 @@ object RadixTreeBench extends App {
     override def hash(x: Unit): Int = 0
   }
 
-  lazy val th = new Thyme() // Thyme.warmed(verbose = println, warmth = HowWarm.BenchOff)
+  lazy val th = Thyme.warmed(verbose = println, warmth = Thyme.HowWarm.BenchOff)
 
   implicit val f = RadixTree.stringIsKey[Unit]
 

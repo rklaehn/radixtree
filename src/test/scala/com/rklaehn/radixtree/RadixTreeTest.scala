@@ -125,6 +125,9 @@ class RadixTreeTest extends FunSuite {
   test("packed") {
     assert(tree === tree.packed)
     assert(tree1k === tree1k.packed)
+    val strings = (0 until 100).map(x => "%03d".format(x) -> (()))
+    val t = RadixTree(strings: _*).packed
+    assert(t.children(0).children(0) eq t.children(1).children(0))
   }
 
   test("keys") {
@@ -197,6 +200,7 @@ class RadixTreeTest extends FunSuite {
       Opt.empty[Int].get
     }
     assert(Opt.empty[Int].toOption.isEmpty)
+    assert(Opt.empty[Int].toString === "Opt.empty")
   }
 
   test("eq") {

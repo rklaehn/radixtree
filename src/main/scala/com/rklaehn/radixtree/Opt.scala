@@ -24,4 +24,7 @@ private class Opt[+A](val ref: A) extends AnyVal {
     if (ref == null) Opt.empty else Opt(f(ref))
 
   def toOption: Option[A] = if (ref == null) None else Some(ref)
+
+  override def toString: String =
+    if (ref == null) "Opt.empty" else s"Opt($ref)"
 }

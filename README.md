@@ -1,6 +1,6 @@
 # radixtree
 
-A generic and fast immutable radix tree for [spire](https://github.com/non/spire).
+A generic and fast immutable radix tree, using [algebra](https://github.com/non/algebra) typeclasses.
 
 [![Build Status](https://travis-ci.org/rklaehn/radixtree.png)](https://travis-ci.org/rklaehn/radixtree)
 [![codecov.io](http://codecov.io/github/rklaehn/radixtree/coverage.svg?branch=master)](http://codecov.io/github/rklaehn/radixtree?branch=master)
@@ -39,15 +39,16 @@ A merge of disjoint or mostly disjoint radix trees can be very fast. E.g. if you
 starting with a, and one with all english words starting with b, merging will be O(1) regardless of the size of the 
 subtrees, and will use structural sharing.
 
+### Prepend
+
+Prepending a prefix to all keys in a radix tree is an O(1) operation with a RadixTree, whereas it would be at least O(n log(n)) with a SortedMap or HashMap
+
 ### FilterPrefix
 
 Filtering by prefix is *extremely fast* with a radix tree (worst case O(log(N)), whereas it is worse than O(N) with
 SortedMap and HashMap. Filtering by prefix will also benefit a lot from structural sharing.
 
 ### Lookup
-
-Successful lookup is O(k), where k is the number of elements in the key. Hashtable lookup is O(k) as well. Even if the
-hashcode matches, the key to be looked up has to be compared with the key in the hash map, which is O(k).
 
 ### Contains
 

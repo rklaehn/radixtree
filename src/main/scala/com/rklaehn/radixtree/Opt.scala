@@ -1,6 +1,6 @@
 package com.rklaehn.radixtree
 
-import spire.algebra.Eq
+import algebra.Eq
 
 private object Opt {
   def apply[A](a: A): Opt[A] = new Opt(a)
@@ -10,10 +10,8 @@ private object Opt {
     case None => Opt.empty[A]
   }
 
-  implicit def Eq[A](implicit aEq: Eq[A]): Eq[Opt[A]] = new Eq[Opt[A]] {
-    def eqv(x: Opt[A], y: Opt[A]): Boolean =
-      if (x.isEmpty) y.isEmpty else aEq.eqv(x.ref, y.ref)
-  }
+  def same[A](x: Opt[A], y: Opt[A])(implicit aEq: Eq[A]): Boolean =
+    if (x.isEmpty) y.isEmpty else aEq.eqv(x.ref, y.ref)
 }
 
 private class Opt[+A](val ref: A) extends AnyVal {

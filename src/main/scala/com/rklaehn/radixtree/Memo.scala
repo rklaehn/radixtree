@@ -1,6 +1,6 @@
 package com.rklaehn.radixtree
 
-import spire.algebra.Eq
+import algebra.Eq
 
 import scala.util.hashing.Hashing
 

@@ -7,7 +7,8 @@ lazy val radixtreeSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scala-lang" % "scala-reflect" % scalaVersion.value % "provided",
     "org.scalatest" %%% "scalatest" % "3.0.0-M7" % "test",
-    "org.spire-math" %%% "spire" % "0.11.0",
+    "org.spire-math" %%% "algebra" % "0.3.1",
+    "org.spire-math" %%% "algebra-std" % "0.3.1",
     "com.rklaehn" %%% "sonicreducer" % "0.2.0",
 
     // thyme

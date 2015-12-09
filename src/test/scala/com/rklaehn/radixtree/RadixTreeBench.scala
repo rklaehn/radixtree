@@ -1,11 +1,11 @@
 package com.rklaehn.radixtree
 
 import ichi.bench.Thyme
-import spire.implicits._
 
 import scala.collection.immutable.{HashMap, SortedMap}
 import scala.io.Source
 import scala.util.hashing.Hashing
+import Instances._
 
 object RadixTreeBench extends App {
   val names = Source.fromURL("http://www-01.sil.org/linguistics/wordlists/english/wordlist/wordsEn.txt").getLines.toArray

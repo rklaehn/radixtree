@@ -1,6 +1,6 @@
 package com.rklaehn.radixtree
 
-import spire.algebra.Eq
+import algebra.Eq
 import com.rklaehn.sonicreducer.Reducer
 
 import scala.annotation.tailrec
@@ -18,10 +18,9 @@ final class RadixTree[K, V](
     children.asInstanceOf[Array[AnyRef]]
 
   def packed: RadixTree[K, V] = {
-    import spire.optional._
     val keyMemo = Memo.simple[K](e, e)
     val valueMemo = Memo.simple[V](e.valueEq, e.valueHashing)
-    val nodeMemo = Memo.simple[RadixTree[K, V]](genericEq.generic, Hashing.default)
+    val nodeMemo = Memo.simple[RadixTree[K, V]](RadixTree.Eq, Hashing.default)
     lazy val pack0: RadixTree[K, V] => RadixTree[K, V] = {
       tree: RadixTree[K, V] =>
         val tree1 = tree.copy(prefix = keyMemo(tree.prefix), valueOpt = tree.valueOpt.map(valueMemo), children = tree.children.map(pack0))
@@ -42,11 +41,10 @@ final class RadixTree[K, V](
 
   override def equals(obj: Any) = obj match {
     case that: RadixTree[K, V] =>
-      import spire.implicits._
       implicit def veq = e.valueEq
       this.hashCode == that.hashCode &&
-        this.prefix === that.prefix &&
-        this.valueOpt === that.valueOpt &&
+        e.eqv(this.prefix, that.prefix) &&
+        Opt.same(this.valueOpt, that.valueOpt) &&
         java.util.Arrays.equals(this.childrenAsAnyRefArray, that.childrenAsAnyRefArray)
     case _ => false
   }
@@ -324,6 +322,10 @@ final class RadixTree[K, V](
 }
 
 object RadixTree {
+
+  implicit def Eq[K, V]: Eq[RadixTree[K, V]] = new Eq[RadixTree[K, V]] {
+    def eqv(x: RadixTree[K, V], y: RadixTree[K, V]): Boolean = x == y
+  }
 
   def empty[K, V](implicit family: Family[K, V]): RadixTree[K, V] =
     family.emptyTree

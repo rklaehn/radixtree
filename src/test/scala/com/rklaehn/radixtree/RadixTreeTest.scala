@@ -1,8 +1,9 @@
 package com.rklaehn.radixtree
 
 import org.scalatest.FunSuite
-import spire.algebra.Eq
-import spire.implicits._
+import algebra.Eq
+import algebra.std.all._
+import Instances._
 
 class RadixTreeTest extends FunSuite {
 
@@ -123,6 +124,7 @@ class RadixTreeTest extends FunSuite {
 
   test("packed") {
     assert(tree === tree.packed)
+    assert(tree1k === tree1k.packed)
   }
 
   test("keys") {
@@ -195,5 +197,9 @@ class RadixTreeTest extends FunSuite {
       Opt.empty[Int].get
     }
     assert(Opt.empty[Int].toOption.isEmpty)
+  }
+
+  test("eq") {
+    Eq.eqv(tree, tree.packed)
   }
 }

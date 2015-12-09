@@ -117,9 +117,9 @@ class RadixTreeTest extends FunSuite {
   }
 
   test("pairs") {
-    assert(kvs.toSet === tree.pairs.toSet)
-    assert(Eq[Array[(Array[Byte], Array[Byte])]].eqv(btree.pairs.toArray, RadixTree(bkvs: _*).pairs.toArray))
-    assert(Eq[Array[(Array[Char], Array[Char])]].eqv(ctree.pairs.toArray, RadixTree(ckvs: _*).pairs.toArray))
+    assert(kvs.toSet === tree.entries.toSet)
+    assert(Eq[Array[(Array[Byte], Array[Byte])]].eqv(btree.entries.toArray, RadixTree(bkvs: _*).entries.toArray))
+    assert(Eq[Array[(Array[Char], Array[Char])]].eqv(ctree.entries.toArray, RadixTree(ckvs: _*).entries.toArray))
   }
 
   test("packed") {
@@ -139,7 +139,7 @@ class RadixTreeTest extends FunSuite {
   }
 
   test("filterPrefix") {
-    assert(kvs.filter { case (k, v) => k.startsWith("1") }.toSeq === tree.filterPrefix("1").pairs.toSeq)
+    assert(kvs.filter { case (k, v) => k.startsWith("1") }.toSeq === tree.filterPrefix("1").entries.toSeq)
     assert(RadixTree("1" -> 1).filterPrefix("foo").isEmpty)
     assert(RadixTree("1" -> 1, "12" -> 12).filterPrefix("123").isEmpty)
   }
@@ -158,7 +158,7 @@ class RadixTreeTest extends FunSuite {
   }
 
   test("filter") {
-    assert(kvs.filter { case (k, v) => k.startsWith("1") }.toSeq === tree.filter { case (k, v) => k.startsWith("1") }.pairs.toSeq)
+    assert(kvs.filter { case (k, v) => k.startsWith("1") }.toSeq === tree.filter { case (k, v) => k.startsWith("1") }.entries.toSeq)
   }
 
   test("filterKeysContaining1") {

@@ -61,7 +61,7 @@ final class RadixTree[K, V](
     )
   }
 
-  override def toString: String = pairs
+  override def toString: String = entries
     .toArray
     .map { case (k, v) => s"$k -> $v" }
     .mkString("RadixTree(", ",", ")")
@@ -83,15 +83,15 @@ final class RadixTree[K, V](
   def subtreeWithPrefix(prefix: K) = {
     val tree1 = filterPrefix(prefix)
     if (e.startsWith(tree1.prefix, prefix, 0))
-      tree1.copy(prefix = e.substring(tree1.prefix, e.size(prefix), e.size(tree1.prefix)))
+      tree1.copy(prefix = e.slice(tree1.prefix, e.size(prefix), e.size(tree1.prefix)))
     else
       e.emptyTree
   }
 
   //    override protected[this] def newBuilder: mutable.Builder[(K, V), Traversable[(K, V)]] = new ArrayBuffer[(K, V)]()
 
-  def pairs: Traversable[(K, V)] = new AbstractTraversable[(K, V)] {
-    def foreach[U](f: ((K, V)) => U) = foreachPair(e.empty, f)
+  def entries: Traversable[(K, V)] = new AbstractTraversable[(K, V)] {
+    def foreach[U](f: ((K, V)) => U) = foreachEntry(e.empty, f)
   }
 
   def values: Traversable[V] = new AbstractTraversable[V] {
@@ -110,11 +110,11 @@ final class RadixTree[K, V](
     }
   }
 
-  private def foreachPair[U](prefix: K, f: ((K, V)) => U) {
+  private def foreachEntry[U](prefix: K, f: ((K, V)) => U) {
     val newPrefix = e.concat(prefix, this.prefix)
     if (valueOpt.isDefined)
       f((newPrefix, valueOpt.get))
-    foreachChild(_.foreachPair(newPrefix, f))
+    foreachChild(_.foreachEntry(newPrefix, f))
   }
 
   private def foreachValue[U](f: V => U) {
@@ -245,8 +245,8 @@ final class RadixTree[K, V](
       // prefixes match
       if (maxFd < ps) {
         // this.prefix is longer than (that.prefix.size - offset)
-        val prefix0 = e.substring(prefix, 0, fd)
-        val prefix1 = e.substring(prefix, fd, ps)
+        val prefix0 = e.slice(prefix, 0, fd)
+        val prefix1 = e.slice(prefix, fd, ps)
         val this1 = copy(prefix = prefix1)
         val children1 = e.mergeChildren(Array(this1), that.children, collision)
         copy(prefix = prefix0, valueOpt = that.valueOpt, children = children1)
@@ -269,7 +269,7 @@ final class RadixTree[K, V](
           val child1 = children(index).merge0(that, childOffset, collision)
           ArrayOps(children).updated(index, child1)
         } else {
-          val tp1 = e.substring(that.prefix, childOffset, tps)
+          val tp1 = e.slice(that.prefix, childOffset, tps)
           val child1 = that.copy(prefix = tp1)
           ArrayOps(children).patched(-index - 1, child1)
         }
@@ -277,9 +277,9 @@ final class RadixTree[K, V](
       }
     } else {
       // both trees have a common prefix (might be "")
-      val commonPrefix = e.substring(prefix, 0, fd)
-      val p1 = e.substring(this.prefix, fd, ps)
-      val tp1 = e.substring(that.prefix, offset + fd, tps)
+      val commonPrefix = e.slice(prefix, 0, fd)
+      val p1 = e.slice(this.prefix, fd, ps)
+      val tp1 = e.slice(that.prefix, offset + fd, tps)
       val childA = this.copy(prefix = p1)
       val childB = that.copy(prefix = tp1)
       val children1 =
@@ -304,12 +304,12 @@ final class RadixTree[K, V](
         val p1s = e.size(prefix1)
         val fs = e.size(fragment)
         val children1 = tree.children.flatMap { child =>
-          val prefixEnd = e.substring(prefix1, (p1s - fs + 1) max 0, p1s)
+          val prefixEnd = e.slice(prefix1, (p1s - fs + 1) max 0, p1s)
           val pes = e.size(prefixEnd)
           var result = filter(child)
           for (i <- 1 until (fs min (pes + 1))) {
             if (e.regionMatches(fragment, 0, prefixEnd, pes - i, i))
-              result = result merge child.filterPrefix(e.substring(fragment, i, fs))
+              result = result merge child.filterPrefix(e.slice(fragment, i, fs))
           }
           if (result.isEmpty) None else Some(result)
         }
@@ -357,6 +357,9 @@ object RadixTree {
      */
     def empty: K
 
+    /**
+      * The empty tree
+      */
     def emptyTree: RadixTree[K, V]
 
     /**
@@ -371,7 +374,7 @@ object RadixTree {
 
     def concat(a: K, b: K): K
 
-    def substring(a: K, from: Int, until: Int): K
+    def slice(a: K, from: Int, until: Int): K
 
     /**
      * Compare key a at index ai with key b at index bi. This determines the order of keys in the tree
@@ -471,7 +474,7 @@ object RadixTree {
     override def startsWith(a: String, b: String, ai: Int): Boolean =
       a.startsWith(b, ai)
 
-    override def substring(a: String, from: Int, until: Int): String =
+    override def slice(a: String, from: Int, until: Int): String =
       a.substring(from, until)
 
     override def indexOf(a: String, b: String): Int =
@@ -515,7 +518,7 @@ object RadixTree {
     override def size(c: Array[Byte]): Int =
       c.length
 
-    override def substring(a: Array[Byte], from: Int, until: Int): Array[Byte] =
+    override def slice(a: Array[Byte], from: Int, until: Int): Array[Byte] =
       a.slice(from, until)
 
     @tailrec
@@ -553,7 +556,7 @@ object RadixTree {
     override def size(c: Array[Char]): Int =
       c.length
 
-    override def substring(a: Array[Char], from: Int, until: Int): Array[Char] =
+    override def slice(a: Array[Char], from: Int, until: Int): Array[Char] =
       a.slice(from, until)
 
     @tailrec

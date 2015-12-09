@@ -1,6 +1,6 @@
 package com.rklaehn.radixtree
 
-import algebra.{Order, Monoid, Semigroup, Eq}
+import algebra.{Order, Monoid, Eq}
 import com.rklaehn.sonicreducer.Reducer
 
 import scala.annotation.tailrec

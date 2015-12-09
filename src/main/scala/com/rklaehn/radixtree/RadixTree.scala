@@ -1,11 +1,12 @@
 package com.rklaehn.radixtree
 
-import algebra.Eq
+import algebra.{Order, Monoid, Semigroup, Eq}
 import com.rklaehn.sonicreducer.Reducer
 
 import scala.annotation.tailrec
 import scala.collection.AbstractTraversable
-import scala.util.hashing.Hashing
+import scala.reflect.ClassTag
+import scala.util.hashing.{MurmurHash3, Hashing}
 
 // scalastyle:off equals.hash.code
 final class RadixTree[K, V](
@@ -327,6 +328,13 @@ object RadixTree {
     def eqv(x: RadixTree[K, V], y: RadixTree[K, V]): Boolean = x == y
   }
 
+  implicit def Monoid[K, V](implicit f: Family[K, V]): Monoid[RadixTree[K, V]] = new Monoid[RadixTree[K, V]] {
+
+    def empty = RadixTree.empty[K, V]
+
+    def combine(x: RadixTree[K, V], y: RadixTree[K, V]) = x merge y
+  }
+
   def empty[K, V](implicit family: Family[K, V]): RadixTree[K, V] =
     family.emptyTree
 
@@ -458,10 +466,10 @@ object RadixTree {
     }
   }
 
-  implicit def stringIsKey[V: Eq]: Family[String, V] =
-    new StringRadixTreeFamily[V](implicitly[Eq[V]], implicitly[Hashing[V]])
+  implicit def stringIsKey[V: Eq: Hashing]: Family[String, V] =
+    new StringTreeFamily[V](implicitly[Eq[V]], implicitly[Hashing[V]])
 
-  private final class StringRadixTreeFamily[V](val valueEq: Eq[V], val valueHashing: Hashing[V])
+  private final class StringTreeFamily[V](val valueEq: Eq[V], val valueHashing: Hashing[V])
       extends Family[String, V] {
 
     override val emptyTree: RadixTree[String, V] = new RadixTree[String, V]("", Array.empty, Opt.empty)(this)
@@ -503,7 +511,7 @@ object RadixTree {
       scala.util.hashing.MurmurHash3.stringHash(e)
   }
 
-  implicit def byteArrayIsKey[V: Eq]: Family[Array[Byte], V] =
+  implicit def byteArrayIsKey[V: Eq: Hashing]: Family[Array[Byte], V] =
     new ByteArrayTreeFamily[V](implicitly[Eq[V]], implicitly[Hashing[V]])
 
   private final class ByteArrayTreeFamily[V](val valueEq: Eq[V], val valueHashing: Hashing[V])
@@ -541,7 +549,7 @@ object RadixTree {
       java.util.Arrays.hashCode(e)
   }
 
-  implicit def charArrayIsKey[V: Eq]: Family[Array[Char], V] =
+  implicit def charArrayIsKey[V: Eq: Hashing]: Family[Array[Char], V] =
     new CharArrayTreeFamily[V](implicitly[Eq[V]], implicitly[Hashing[V]])
 
   private final class CharArrayTreeFamily[V](val valueEq: Eq[V], val valueHashing: Hashing[V])
@@ -578,4 +586,47 @@ object RadixTree {
     override def hash(e: Array[Char]): Int =
       java.util.Arrays.hashCode(e)
   }
+
+  implicit def arrayIsKey[K: Order: Hashing: ClassTag, V: Eq: Hashing]: Family[Array[K], V] =
+    new ArrayTreeFamily
+
+  private final class ArrayTreeFamily[K, V]
+  ( implicit
+    val keyOrder: Order[K],
+    val keyHashing: Hashing[K],
+    val keyClassTag: ClassTag[K],
+    val valueEq: Eq[V],
+    val valueHashing: Hashing[V]
+  ) extends Family[Array[K], V] {
+    def size(c: Array[K]) = c.length
+    val empty = Array.empty[K]
+    val emptyTree = new RadixTree(empty, Array.empty[RadixTree[Array[K], V]], Opt.empty[V])(this)
+    def intern(e: Array[K]) = e
+    def concat(a: Array[K], b: Array[K]): Array[K] = a ++ b
+    def slice(a: Array[K], from: Int, until: Int) = a.slice(from, until)
+    def compareAt(a: Array[K], ai: Int, b: Array[K], bi: Int) = keyOrder.compare(a(ai), b(bi))
+    def indexOfFirstDifference(a: Array[K], ai: Int, b: Array[K], bi: Int, count: Int) =
+      if (count == 0 || keyOrder.neqv(a(ai),b(bi))) ai
+      else indexOfFirstDifference(a, ai + 1, b, bi + 1, count - 1)
+    def eqv(x: Array[K], y: Array[K]): Boolean = x.length == y.length && {
+      // todo: use algebra instance once it becomes available
+      var i = 0
+      while(i < x.length) {
+        if(keyOrder.neqv(x(i), y(i)))
+          return false
+        i = 1
+      }
+      true
+    }
+    def hash(e: Array[K]) = {
+      var hash = MurmurHash3.arraySeed
+      var i = 0
+      while(i < e.length) {
+        hash = MurmurHash3.mix(hash, keyHashing.hash(e(i)))
+        i += 1
+      }
+      hash
+    }
+  }
+
 }

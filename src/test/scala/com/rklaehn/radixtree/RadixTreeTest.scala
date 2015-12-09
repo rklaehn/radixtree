@@ -1,7 +1,7 @@
 package com.rklaehn.radixtree
 
 import org.scalatest.FunSuite
-import algebra.Eq
+import algebra.{Monoid, Eq}
 import algebra.std.all._
 import Instances._
 
@@ -9,6 +9,8 @@ class RadixTreeTest extends FunSuite {
 
   implicit class StringOps(underlying: String) {
     def toBytes = underlying.getBytes("UTF-8")
+
+    def toShorts = toBytes.map(_.toShort)
   }
 
   val kvs = (0 until 100).map(i => i.toString -> i)
@@ -22,6 +24,10 @@ class RadixTreeTest extends FunSuite {
   val bkvs = (0 until 100).map(i => i.toString.toBytes -> i.toString.toBytes)
 
   val btree = RadixTree(bkvs: _*)
+
+  val skvs = (0 until 100).map(i => i.toString.toShorts -> i.toString.toShorts)
+
+  val stree = RadixTree(skvs: _*)
 
   val ckvs = (0 until 100).map(i => i.toString.toCharArray -> i.toString.toCharArray)
 
@@ -46,19 +52,21 @@ class RadixTreeTest extends FunSuite {
   }
 
   def testEquals[K, V](kvs: (K, V)*)(implicit f: RadixTree.Family[K, V]): Unit = {
-    assert(RadixTree(kvs: _*) === RadixTree(kvs.reverse: _*))
+    if(!(RadixTree(kvs: _*) === RadixTree(kvs.reverse: _*))) {
+      val a = RadixTree(kvs: _*)
+      val b = RadixTree(kvs.reverse: _*)
+      assert(RadixTree(kvs: _*) === RadixTree(kvs.reverse: _*))
+    }
   }
 
   def testHashCode[K, V](kvs: (K, V)*)(implicit f: RadixTree.Family[K, V]): Unit = {
     assert(RadixTree(kvs: _*).hashCode === RadixTree(kvs.reverse: _*).hashCode)
-    assert(RadixTree(bkvs: _*).hashCode === RadixTree(bkvs.reverse: _*).hashCode)
-    assert(RadixTree(ckvs: _*).hashCode === RadixTree(ckvs.reverse: _*).hashCode)
   }
 
   def testGeneric[K, V](kvs: (K, V)*)(implicit f: RadixTree.Family[K, V]): Unit = {
     testCreate(kvs: _*)
-    testEquals(kvs: _*)
     testHashCode(kvs: _*)
+    testEquals(kvs: _*)
   }
 
   test("createFromPairs") {
@@ -67,6 +75,9 @@ class RadixTreeTest extends FunSuite {
 
   test("generic") {
     testGeneric(kvs: _*)
+    testGeneric(ckvs: _*)
+    testGeneric(bkvs: _*)
+    testGeneric(skvs: _*)
     testGeneric(kvs1k: _*)
     testGeneric(bkvs1k: _*)
   }
@@ -205,5 +216,22 @@ class RadixTreeTest extends FunSuite {
 
   test("eq") {
     Eq.eqv(tree, tree.packed)
+  }
+
+  test("implicitly") {
+    assert(implicitly[RadixTree.Family[String, String]].getClass.getSimpleName === "StringTreeFamily")
+    assert(implicitly[RadixTree.Family[Array[Byte], Array[Byte]]].getClass.getSimpleName === "ByteArrayTreeFamily")
+    assert(implicitly[RadixTree.Family[Array[Char], Array[Char]]].getClass.getSimpleName === "CharArrayTreeFamily")
+    assert(implicitly[RadixTree.Family[Array[Short], Array[Short]]].getClass.getSimpleName === "ArrayTreeFamily")
+  }
+
+  test("arrayIsKey") {
+    assert(RadixTree.arrayIsKey[Byte, Unit].concat("a".toBytes, "b".toBytes).length == 2)
+    assert(RadixTree.arrayIsKey[Byte, Unit].neqv("a".toBytes, "b".toBytes))
+  }
+  test("monoid") {
+    val entries = (0 until 100).map(x => x.toString -> (()))
+    val singles = entries.map { case (k, v) => RadixTree.singleton(k, v) }
+    assert(RadixTree(entries: _*) === Monoid[RadixTree[String, Unit]].combineAll(singles))
   }
 }

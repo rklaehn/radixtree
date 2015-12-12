@@ -59,7 +59,7 @@ class RadixTreeTest extends FunSuite {
     assert(Hash.hash(RadixTree(kvs: _*)) === Hash.hash(RadixTree(kvs.reverse: _*)))
   }
 
-  def testGeneric[K: RadixTree.Key, V: Hash](kvs: (K, V)*): Unit = {
+  def testGeneric[K: RadixTree.Key: Hash, V: Hash](kvs: (K, V)*): Unit = {
     testCreate(kvs: _*)
     testHashCode(kvs: _*)
     testEquals(kvs: _*)

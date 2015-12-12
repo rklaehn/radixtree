@@ -9,9 +9,6 @@ private object Opt {
     case Some(x) => Opt(x)
     case None => Opt.empty[A]
   }
-
-  def same[A](x: Opt[A], y: Opt[A])(implicit aEq: Eq[A]): Boolean =
-    if (x.isEmpty) y.isEmpty else aEq.eqv(x.ref, y.ref)
 }
 
 private class Opt[+A](val ref: A) extends AnyVal {

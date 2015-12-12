@@ -1,8 +1,30 @@
 package com.rklaehn
 
+import algebra.Eq
+import scala.reflect.ClassTag
+import scala.util.hashing.MurmurHash3
+
 package object radixtree {
 
-  import scala.reflect.ClassTag
+  private[radixtree] def arrayEqv[A: Eq](x: Array[A], y: Array[A]): Boolean = x.length == y.length && {
+    var i = 0
+    while (i < x.length) {
+      if (!Eq.eqv(x(i), y(i)))
+        return false
+      i += 1
+    }
+    true
+  }
+
+  private[radixtree] def arrayHash[A: Hash](a: Array[A]): Int = {
+    var result = MurmurHash3.arraySeed
+    var i = 0
+    while(i < a.length) {
+      result = MurmurHash3.mix(result, Hash.hash(a(i)))
+      i += 1
+    }
+    result
+  }
 
   private[radixtree] implicit class ArrayOps[T](private val underlying: Array[T]) extends AnyVal {
 

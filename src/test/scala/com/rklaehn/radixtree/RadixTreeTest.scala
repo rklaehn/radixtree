@@ -41,29 +41,25 @@ class RadixTreeTest extends FunSuite {
 
   val texttree = RadixTree(textkvs: _*)
 
-  def testCreate[K, V](kvs: (K, V)*)(implicit f: RadixTree.Family[K, V]): Unit = {
+  def testCreate[K: RadixTree.Key, V: Eq](kvs: (K, V)*): Unit = {
     val tree = RadixTree(kvs: _*)
     assert(kvs.size === tree.count)
     for ((k, v) <- kvs) {
       assert(tree.contains(k))
-      assert(f.valueEq.eqv(v, tree(k)))
-      assert(f.valueEq.eqv(v, tree.get(k).get))
+      assert(tree.get(k).isDefined)
+      assert(Eq.eqv(tree(k), v))
     }
   }
 
-  def testEquals[K, V](kvs: (K, V)*)(implicit f: RadixTree.Family[K, V]): Unit = {
-    if(!(RadixTree(kvs: _*) === RadixTree(kvs.reverse: _*))) {
-      val a = RadixTree(kvs: _*)
-      val b = RadixTree(kvs.reverse: _*)
-      assert(RadixTree(kvs: _*) === RadixTree(kvs.reverse: _*))
-    }
+  def testEquals[K: Eq, V: Eq](kvs: (K, V)*)(implicit f: RadixTree.Key[K]): Unit = {
+    assert(Eq.eqv(RadixTree(kvs: _*), RadixTree(kvs.reverse: _*)))
   }
 
-  def testHashCode[K, V](kvs: (K, V)*)(implicit f: RadixTree.Family[K, V]): Unit = {
-    assert(RadixTree(kvs: _*).hashCode === RadixTree(kvs.reverse: _*).hashCode)
+  def testHashCode[K: Hash, V: Hash](kvs: (K, V)*)(implicit f: RadixTree.Key[K]): Unit = {
+    assert(Hash.hash(RadixTree(kvs: _*)) === Hash.hash(RadixTree(kvs.reverse: _*)))
   }
 
-  def testGeneric[K, V](kvs: (K, V)*)(implicit f: RadixTree.Family[K, V]): Unit = {
+  def testGeneric[K: RadixTree.Key, V: Hash](kvs: (K, V)*): Unit = {
     testCreate(kvs: _*)
     testHashCode(kvs: _*)
     testEquals(kvs: _*)
@@ -83,20 +79,25 @@ class RadixTreeTest extends FunSuite {
   }
 
   test("equals") {
-    assert(tree === RadixTree(kvs: _*))
-    assert(tree === RadixTree(kvs.reverse: _*))
-    assert(btree === RadixTree(bkvs: _*))
-    assert(btree === RadixTree(bkvs.reverse: _*))
-    assert(!(tree === "fnord"))
+    intercept[UnsupportedOperationException] {
+      tree.equals("foo")
+    }
+    assert(Eq.eqv(tree, RadixTree(kvs: _*)))
+    assert(Eq.eqv(tree, RadixTree(kvs.reverse: _*)))
+    assert(Eq.eqv(btree, RadixTree(bkvs: _*)))
+    assert(Eq.eqv(btree, RadixTree(bkvs.reverse: _*)))
   }
 
   test("hashCode") {
-    assert(tree.## === RadixTree(kvs: _*).##)
-    assert(btree.## === RadixTree(bkvs: _*).##)
+    intercept[UnsupportedOperationException] {
+      tree.hashCode
+    }
+    assert(Hash.hash(tree) === Hash.hash(RadixTree(kvs: _*)))
+    assert(Hash.hash(btree) === Hash.hash(RadixTree(bkvs: _*)))
   }
 
   test("toString") {
-    assert("RadixTree(1 -> 1)" === RadixTree("1" -> 1).toString)
+    assert(!RadixTree("1" -> 1).toString.isEmpty)
     assert(!RadixTree("1" -> 1).printStructure.isEmpty)
   }
 
@@ -134,8 +135,8 @@ class RadixTreeTest extends FunSuite {
   }
 
   test("packed") {
-    assert(tree === tree.packed)
-    assert(tree1k === tree1k.packed)
+    assert(Eq.eqv(tree, tree.packed))
+    assert(Eq.eqv(tree1k, tree1k.packed))
     val strings = (0 until 100).map(x => "%03d".format(x) -> (()))
     val t = RadixTree(strings: _*).packed
     assert(t.children(0).children(0) eq t.children(1).children(0))
@@ -219,19 +220,19 @@ class RadixTreeTest extends FunSuite {
   }
 
   test("implicitly") {
-    assert(implicitly[RadixTree.Family[String, String]].getClass.getSimpleName === "StringTreeFamily")
-    assert(implicitly[RadixTree.Family[Array[Byte], Array[Byte]]].getClass.getSimpleName === "ByteArrayTreeFamily")
-    assert(implicitly[RadixTree.Family[Array[Char], Array[Char]]].getClass.getSimpleName === "CharArrayTreeFamily")
-    assert(implicitly[RadixTree.Family[Array[Short], Array[Short]]].getClass.getSimpleName === "ArrayTreeFamily")
+    assert(implicitly[RadixTree.Key[String]].getClass.getSimpleName === "StringKey$")
+    assert(implicitly[RadixTree.Key[Array[Byte]]].getClass.getSimpleName === "ByteArrayKey$")
+    assert(implicitly[RadixTree.Key[Array[Char]]].getClass.getSimpleName === "CharArrayKey$")
+    assert(implicitly[RadixTree.Key[Array[Short]]].getClass.getSimpleName === "ArrayKey")
   }
 
   test("arrayIsKey") {
-    assert(RadixTree.arrayIsKey[Byte, Unit].concat("a".toBytes, "b".toBytes).length == 2)
-    assert(RadixTree.arrayIsKey[Byte, Unit].neqv("a".toBytes, "b".toBytes))
+    assert(RadixTree.arrayIsKey[Byte].concat("a".toBytes, "b".toBytes).length == 2)
+    assert(RadixTree.arrayIsKey[Byte].neqv("a".toBytes, "b".toBytes))
   }
   test("monoid") {
     val entries = (0 until 100).map(x => x.toString -> (()))
     val singles = entries.map { case (k, v) => RadixTree.singleton(k, v) }
-    assert(RadixTree(entries: _*) === Monoid[RadixTree[String, Unit]].combineAll(singles))
+    assert(Eq.eqv(RadixTree(entries: _*), Monoid[RadixTree[String, Unit]].combineAll(singles)))
   }
 }

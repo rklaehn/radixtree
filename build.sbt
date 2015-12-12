@@ -82,6 +82,7 @@ lazy val instrumentedTest = project.in(file("instrumentedTest"))
   .settings(name := "instrumentedTest")
   .settings(commonSettings: _*)
   .settings(instrumentedTestSettings: _*)
+  .settings(noPublish: _*)
   .dependsOn(coreJVM)
 
 lazy val instrumentedTestSettings = {

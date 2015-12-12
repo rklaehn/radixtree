@@ -1,14 +1,14 @@
 package com.rklaehn.radixtree
 import org.github.jamm.MemoryMeter
-import spire.implicits._
 
 import scala.io.Source
-import scala.util.hashing.Hashing
 
 object SizeTest extends App {
-  implicit object EqHashing extends Hashing[Unit] {
+  implicit object eqHash extends Hash[Unit] {
 
     override def hash(x: Unit): Int = 0
+
+    override def eqv(x: Unit, y: Unit) = true
   }
 
   lazy val mm = new MemoryMeter()

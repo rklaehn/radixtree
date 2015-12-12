@@ -19,8 +19,6 @@ object RadixTreeBench extends App {
 
   lazy val th = Thyme.warmed(verbose = println, warmth = Thyme.HowWarm.BenchOff)
 
-  implicit val f = RadixTree.stringIsKey[Unit]
-
   val kvs = names.map(s => s -> (()))
 
   val kvsc = names.map(s => s.toCharArray -> (()))
@@ -37,7 +35,7 @@ object RadixTreeBench extends App {
     SortedMap(kvs: _*).size
   }
 
-  def create1[K, V](kvs: Array[(K, V)])(implicit f:RadixTree.Family[K, V]): Int = {
+  def create1[K, V](kvs: Array[(K, V)])(implicit f:RadixTree.Key[K]): Int = {
     RadixTree[K,V](kvs: _*).count
   }
 

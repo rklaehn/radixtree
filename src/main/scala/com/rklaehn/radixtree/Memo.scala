@@ -6,7 +6,17 @@ import scala.util.hashing.Hashing
 
 private object Memo {
 
-  def simple[A](implicit e: Eq[A], h: Hashing[A]): A ⇒ A = new (A ⇒ A) {
+  def fromFunction[A: Hash](f: A ⇒ A): A ⇒ A = new (A ⇒ A) {
+
+    val memo = new scala.collection.mutable.AnyRefMap[Element[A], Element[A]]
+
+    def apply(a: A): A = {
+      val k = Element(a)
+      memo.getOrElseUpdate(k, Element(f(a))).value
+    }
+  }
+
+  def simple[A: Hash]: A ⇒ A = new (A ⇒ A) {
 
     val memo = new scala.collection.mutable.AnyRefMap[Element[A], Element[A]]
 
@@ -16,7 +26,7 @@ private object Memo {
     }
   }
 
-  final case class Element[A](value: A)(implicit e: Eq[A], h: Hashing[A]) {
+  final case class Element[A](value: A)(implicit e: Eq[A], h: Hash[A]) {
 
     override def equals(that: Any): Boolean = that match {
       case that: Element[A] => e.eqv(this.value, that.value)

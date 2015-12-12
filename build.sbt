@@ -1,6 +1,6 @@
 import ReleaseTransformations._
 
-lazy val radixtreeSettings = Seq(
+lazy val commonSettings = Seq(
   organization := "com.rklaehn",
   scalaVersion := "2.11.7",
   crossScalaVersions := Seq("2.10.5", "2.11.7"),
@@ -69,20 +69,20 @@ lazy val noPublish = Seq(
   publishArtifact := false)
 
 lazy val root = project.in(file("."))
-  .aggregate(radixtreeJVM, radixtreeJS)
-  .settings(name := "radixtree-root")
-  .settings(radixtreeSettings: _*)
+  .aggregate(coreJVM, coreJS, instrumentedTest)
+  .settings(name := "root")
+  .settings(commonSettings: _*)
   .settings(noPublish: _*)
 
-lazy val radixtree = crossProject.crossType(CrossType.Pure).in(file("."))
+lazy val core = crossProject.crossType(CrossType.Pure).in(file("."))
   .settings(name := "radixtree")
-  .settings(radixtreeSettings: _*)
+  .settings(commonSettings: _*)
 
-lazy val radixtreeInstrumentedTest = project.in(file("instrumented-test"))
-  .settings(name := "radixtreeInstrumentedTest")
-  .settings(radixtreeSettings: _*)
+lazy val instrumentedTest = project.in(file("instrumentedTest"))
+  .settings(name := "instrumentedTest")
+  .settings(commonSettings: _*)
   .settings(instrumentedTestSettings: _*)
-  .dependsOn(radixtreeJVM)
+  .dependsOn(coreJVM)
 
 lazy val instrumentedTestSettings = {
   def makeAgentOptions(classpath:Classpath) : String = {
@@ -96,5 +96,5 @@ lazy val instrumentedTestSettings = {
     )
 }
 
-lazy val radixtreeJVM = radixtree.jvm
-lazy val radixtreeJS = radixtree.js
+lazy val coreJVM = core.jvm
+lazy val coreJS = core.js

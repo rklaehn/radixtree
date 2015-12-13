@@ -38,8 +38,6 @@ final class RadixTree[K, V](val prefix: K, private[radixtree] val children: Arra
   def printStructure: String = children
     .mkString(s"RadixTree($prefix, $valueOpt, [", ",", "])")
 
-  override def toString = printStructure
-
   def isEmpty(implicit K: Key[K]) = K.size(prefix) == 0
 
   def prepend(prefix: K)(implicit K: Key[K]): RadixTree[K, V] =
@@ -166,7 +164,11 @@ final class RadixTree[K, V](val prefix: K, private[radixtree] val children: Arra
     copy(children = children1, valueOpt = newValueOpt)
   }
 
-  private def copy(prefix: K = this.prefix, valueOpt: Opt[V] = this.valueOpt, children: Array[RadixTree[K, V]] = this.children)(implicit K: Key[K]): RadixTree[K, V] = {
+  private def copy(
+      prefix: K = this.prefix,
+      valueOpt: Opt[V] = this.valueOpt,
+      children: Array[RadixTree[K, V]] = this.children
+    )(implicit K: Key[K]): RadixTree[K, V] = {
     def same(a: Opt[V], b: Opt[V]): Boolean =
       if (a.isDefined && b.isDefined)
         a.get.asInstanceOf[AnyRef] eq b.get.asInstanceOf[AnyRef]
@@ -537,11 +539,13 @@ object RadixTree {
     override def eqv(x: Array[K], y: Array[K]): Boolean = x.length == y.length && {
       // todo: use algebra instance once it becomes available
       var i = 0
+      // scalastyle:off return
       while(i < x.length) {
         if(Order.neqv(x(i), y(i)))
           return false
         i = 1
       }
+      // scalastyle:on return
       true
     }
     def hash(e: Array[K]) = {

@@ -4,6 +4,7 @@ import algebra.Eq
 import scala.reflect.ClassTag
 import scala.util.hashing.MurmurHash3
 
+// scalastyle:off return
 package object radixtree {
 
   private[radixtree] def arrayEqv[A: Eq](x: Array[A], y: Array[A]): Boolean = x.length == y.length && {
@@ -34,17 +35,14 @@ package object radixtree {
       result
     }
 
-    def patched(index: Int, value: T): Array[T] = {
-      val result = underlying.newArray(underlying.length + 1)
+    def patched(index: Int, value: T)(implicit c: ClassTag[T]): Array[T] = {
+      val result = new Array[T](underlying.length + 1)
       System.arraycopy(underlying, 0, result, 0, index)
       result(index) = value
       if (index < underlying.length)
         System.arraycopy(underlying, index, result, index + 1, underlying.length - index)
       result
     }
-
-    def newArray(n: Int): Array[T] =
-      java.lang.reflect.Array.newInstance(underlying.getClass.getComponentType, n).asInstanceOf[Array[T]]
 
     def resizeInPlace(n: Int)(implicit c: ClassTag[T]): Array[T] =
       if (underlying.length == n)

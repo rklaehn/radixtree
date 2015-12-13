@@ -26,6 +26,7 @@ private object Memo {
     }
   }
 
+  // scalastyle:off equals.hash.code
   final case class Element[A](value: A)(implicit e: Eq[A], h: Hash[A]) {
 
     override def equals(that: Any): Boolean = that match {

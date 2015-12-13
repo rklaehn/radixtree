@@ -98,8 +98,10 @@ class RadixTreeTest extends FunSuite {
   }
 
   test("toString") {
+    import cats.implicits._
     assert(!RadixTree("1" -> 1).toString.isEmpty)
     assert(!RadixTree("1" -> 1).printStructure.isEmpty)
+    assert(!RadixTree("1" -> 1).show.isEmpty)
   }
 
   test("startsWith") {
@@ -235,5 +237,16 @@ class RadixTreeTest extends FunSuite {
     val entries = (0 until 100).map(x => x.toString -> (()))
     val singles = entries.map { case (k, v) => RadixTree.singleton(k, v) }
     assert(Eq.eqv(RadixTree(entries: _*), Monoid[RadixTree[String, Unit]].combineAll(singles)))
+  }
+  test("wordCount") {
+    import scala.io.Source
+    val text = Source.fromURL("http://classics.mit.edu/Homer/odyssey.mb.txt").getLines
+    val words = text.flatMap(_.split(' ')).filterNot(_.isEmpty)
+    val m = AdditiveMonoid[RadixTree[String, Int]]
+    val count = words.map(x ⇒ RadixTree(x → 1)).reduce(m.plus)
+    println(count.entries.take(10))
+  }
+  test("arrayEq") {
+    assert(!arrayEqv(Array(1,2), Array(1,3)))
   }
 }

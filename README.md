@@ -1,10 +1,10 @@
-# radixtree
-
-A generic and fast immutable radix tree, using [algebra](https://github.com/non/algebra) typeclasses.
-
 [![Build Status](https://travis-ci.org/rklaehn/radixtree.png)](https://travis-ci.org/rklaehn/radixtree)
 [![codecov.io](http://codecov.io/github/rklaehn/radixtree/coverage.svg?branch=master)](http://codecov.io/github/rklaehn/radixtree?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.rklaehn/radixtree_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.rklaehn/radixtree_2.11)
+
+# radixtree
+
+A generic and fast immutable radix tree, using [algebra](https://github.com/non/algebra) and [cats](https://github.com/non/cats) typeclasses.
 
 This is an immutable generic radix tree. It works for both immutable objects which override equals and hashcode, and
 objects that *do not* override equals and hashcode, such as raw byte arrays.

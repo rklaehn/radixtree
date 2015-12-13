@@ -8,9 +8,13 @@ A generic and fast immutable radix tree, using [algebra](https://github.com/non/
 
 ```
 import com.rklaehn.radixtree._
+import scala.io.Source
 
-val tree1 = RadixTree("a" -> 1, "b" -> 2)
-println(tree1("a"))
+val words = Source.fromURL("http://www-01.sil.org/linguistics/wordlists/english/wordlist/wordsEn.txt").getLines.toArray
+val pairs = words.map(x => x -> x)
+val tree = RadixTree(pairs: _*)
+// print all english words starting with z
+println(tree.filterPrefix("z").keys.take(10))
 ```
 
 This is an immutable generic radix tree. It works for both immutable objects which override equals and hashcode, and

@@ -143,6 +143,9 @@ final class RadixTree[K, V](val prefix: K, private[radixtree] val children: Arra
     copy(children = children1, valueOpt = valueOpt1)
   }
 
+  def mapValues[V2](f: V ⇒ V2): RadixTree[K, V2] =
+    new RadixTree[K, V2](prefix, children.map(_.mapValues(f)), valueOpt.map(f))
+
   def filter(f: (K, V) => Boolean)(implicit K: Key[K]): RadixTree[K, V] =
     filter0(f, K.empty)
 

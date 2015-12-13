@@ -97,6 +97,10 @@ class RadixTreeTest extends FunSuite {
     assert(Hash.hash(btree) === Hash.hash(RadixTree(bkvs: _*)))
   }
 
+  test("mapValues") {
+    assert(Eq.eqv(RadixTree("1" → 1, "11" → 11).mapValues(_.toString), RadixTree("1" → "1", "11" → "11")))
+  }
+
   test("toString") {
     import cats.implicits._
     assert(!RadixTree("1" -> 1).toString.isEmpty)

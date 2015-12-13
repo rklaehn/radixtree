@@ -1,6 +1,7 @@
 package com.rklaehn.radixtree
 import org.github.jamm.MemoryMeter
 
+import scala.collection.immutable.SortedSet
 import scala.io.Source
 
 object SizeTest extends App {
@@ -24,12 +25,16 @@ object SizeTest extends App {
     //    val pairsB = names.map(name => name.getBytes("UTF-8") -> (())).toArray
     val tree1 = RadixTree(pairs: _*)
     val tree2 = tree1.packed
+    val hashSet = pairs.toSet
+    val sortedSet = pairs.to[SortedSet]
     //    val tree1c = RadixTree(pairsC: _*)
     //    val tree2c = tree1c.packed
     //    val tree1b = RadixTree(pairsB: _*)
     //    val tree2b = tree1b.packed
     println(text)
     println("\tElements:           " + mm.measureDeep(pairs))
+    println("\tHashSet:            " + mm.measureDeep(hashSet))
+    println("\tSortedSet:          " + mm.measureDeep(sortedSet))
     println("\tRadixTree:          " + mm.measureDeep(tree1))
     println("\tRadixTree (packed): " + mm.measureDeep(tree2))
     //    println("\tRadixTree:          " + mm.measureDeep(tree1c))

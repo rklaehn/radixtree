@@ -18,6 +18,31 @@ val tree = RadixTree(pairs: _*)
 println(tree.filterPrefix("z").keys.take(10))
 ```
 
+## Word count using AdditiveMonoid instance
+
+```
+import com.rklaehn.radixtree._
+import algebra.ring.AdditiveMonoid
+import algebra.std.all._
+import scala.io.Source
+
+val text = Source.fromURL("http://classics.mit.edu/Homer/odyssey.mb.txt").getLines
+val words = text.flatMap(_.split(' ')).filterNot(_.isEmpty)
+val m = AdditiveMonoid[RadixTree[String, Int]]
+val count = words.map(x ⇒ RadixTree(x → 1)).reduce(m.plus)
+println(count.entries.take(10))
+```
+
+## toString, hashCode, equals
+
+None of the methods of java.lang.Object are implemented on RadixTree. Use cats.Show to get a textual representation:
+
+```
+import com.rklaehn.radixtree._
+import cats.implicits._
+println(RadixTree("a" -> 1).show)
+```
+
 This is an immutable generic radix tree. It works for both immutable objects which override equals and hashcode, and
 objects that *do not* override equals and hashcode, such as raw byte arrays.
 

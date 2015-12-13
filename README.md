@@ -60,6 +60,47 @@ sbt instrumentedTest/test:run
 
 The radix tree is much more efficient regarding space usage than the standard scala collections. It consumes just slightly more space than the elements. When packing the radix tree, it consumes **extremely** little space. Less than the list of words itself!
 
+## Performance
+
+As you can see from the benchmark results, creation and lookup is faster than with the standard `scala.collection.immutable.SortedMap`, which is the closest equivalent from the scala collections. However, filterPrefix is **many thousand times faster**, since it is one of the optimizations a RadixTree is designed for.
+
+So a very simple example where a RadixTree is very useful is word completion from a very large dictionary.
+
+Benchmarks can be run using
+```
+sbt coreJVM/test:run
+```
+
+### Creation benchmark
+
+```
+Benchmark comparison (in 10.73 s): Create 1000 SortedMap vs. RadixTree
+Significantly different (p ~= 0)
+  Time ratio:    0.81548   95% CI 0.79274 - 0.83821   (n=20)
+    First     47.99 ms   95% CI 47.14 ms - 48.84 ms
+    Second    39.13 ms   95% CI 38.29 ms - 39.98 ms
+```
+
+### Lookup benchmark
+
+```
+Benchmark comparison (in 9.110 s): Lookup 1000 SortedMap vs. RadixTree
+Significantly different (p ~= 0)
+  Time ratio:    0.34484   95% CI 0.32363 - 0.36605   (n=20)
+    First     46.24 ms   95% CI 44.63 ms - 47.86 ms
+    Second    15.95 ms   95% CI 15.14 ms - 16.75 ms
+```
+
+### FilterPrefix benchmark
+
+```
+Benchmark comparison (in 3.930 s): FilterPrefix SortedMap vs. RadixTree
+Significantly different (p ~= 0)
+  Time ratio:    0.00015   95% CI 0.00014 - 0.00015   (n=20)
+    First     1.843 ms   95% CI 1.803 ms - 1.883 ms
+    Second    267.3 ns   95% CI 262.4 ns - 272.1 ns
+```
+
 ## Optimized operations
 
 ### Merge

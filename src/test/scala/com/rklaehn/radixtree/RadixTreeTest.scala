@@ -1,25 +1,13 @@
 package com.rklaehn.radixtree
 
 import algebra.laws.GroupLaws
+import algebra.ring.AdditiveMonoid
 import org.scalacheck.Arbitrary
 import org.scalatest.FunSuite
 import algebra.{Monoid, Eq}
 import algebra.std.all._
 import Instances._
 import org.typelevel.discipline.scalatest.Discipline
-
-class RadixTreeLawsCheck extends FunSuite with Discipline {
-
-  implicit def arbRadixTree[K: Arbitrary : RadixTree.Key, V: Arbitrary]: Arbitrary[RadixTree[K, V]] = Arbitrary {
-    for {
-      kvs ← Arbitrary.arbitrary[List[(K, V)]]
-    } yield
-    RadixTree(kvs: _*)
-  }
-
-  checkAll("GroupLaws[RadixTree[String, String]].monoid", GroupLaws[RadixTree[String, String]].monoid)
-  checkAll("GroupLaws[RadixTree[Array[Byte], Array[Byte]]].monoid", GroupLaws[RadixTree[Array[Byte], Array[Byte]]].monoid)
-}
 
 class RadixTreeTest extends FunSuite {
 
@@ -140,7 +128,7 @@ class RadixTreeTest extends FunSuite {
 
   test("mergeNoCollision") {
     val a = RadixTree("a" -> 1)
-    val b = a.merge(a, _ + _)
+    val b = a.mergeWith(a, _ + _)
     assert(2 === b("a"))
   }
 

@@ -1,5 +1,6 @@
 package com.rklaehn.radixtree
 
+import algebra.ring.{AdditiveMonoid, AdditiveSemigroup}
 import algebra.{Order, Monoid, Eq}
 import com.rklaehn.radixtree.RadixTree.Key
 import com.rklaehn.sonicreducer.Reducer
@@ -7,7 +8,8 @@ import com.rklaehn.sonicreducer.Reducer
 import scala.annotation.tailrec
 import scala.collection.AbstractTraversable
 import scala.reflect.ClassTag
-import scala.util.hashing.{MurmurHash3, Hashing}
+import scala.util.hashing.MurmurHash3
+import cats.Show
 
 final class RadixTree[K, V](val prefix: K, private[radixtree] val children: Array[RadixTree[K, V]], private[radixtree] val valueOpt: Opt[V]) extends NoEquals {
 
@@ -35,6 +37,8 @@ final class RadixTree[K, V](val prefix: K, private[radixtree] val children: Arra
 
   def printStructure: String = children
     .mkString(s"RadixTree($prefix, $valueOpt, [", ",", "])")
+
+  override def toString = printStructure
 
   def isEmpty(implicit K: Key[K]) = K.size(prefix) == 0
 
@@ -182,7 +186,7 @@ final class RadixTree[K, V](val prefix: K, private[radixtree] val children: Arra
   def merge(other: RadixTree[K, V])(implicit K: Key[K]): RadixTree[K, V] =
     merge0(other, 0, null)
 
-  def merge(other: RadixTree[K, V], collision: (V, V) => V)(implicit K: Key[K]): RadixTree[K, V] =
+  def mergeWith(other: RadixTree[K, V], collision: (V, V) => V)(implicit K: Key[K]): RadixTree[K, V] =
     merge0(other, 0, collision)
 
   def apply(key: K)(implicit K: Key[K]) = get0(key, 0).get
@@ -295,7 +299,7 @@ private class RadixTreeEqv[K: Eq, V: Eq] extends Eq[RadixTree[K, V]] {
   def eqv(x: RadixTree[K, V], y: RadixTree[K, V]) = {
     def same(a: Opt[V], b: Opt[V]): Boolean =
       if (a.isDefined && b.isDefined)
-        a.get.asInstanceOf[AnyRef] eq b.get.asInstanceOf[AnyRef]
+        Eq.eqv(a.get, b.get)
       else a.isDefined == b.isDefined
     Eq.eqv(x.prefix, y.prefix) &&
     same(x.valueOpt, y.valueOpt) &&
@@ -318,11 +322,24 @@ object RadixTree {
 
   implicit def hash[K: Hash, V: Hash]: Hash[RadixTree[K, V]] = new RadixTreeHash[K, V]
 
-  implicit def monoid[K, V](implicit f: Key[K]): Monoid[RadixTree[K, V]] = new Monoid[RadixTree[K, V]] {
+  implicit def show[K: Key: Show, V: Show]: Show[RadixTree[K, V]] = Show.show {
+    _.entries
+      .map { case (k, v) ⇒ s"$k->$v" }
+      .mkString("RadixTree(", ",", ")")
+  }
+
+  implicit def monoid[K: Key, V]: Monoid[RadixTree[K, V]] = new Monoid[RadixTree[K, V]] {
 
     def empty = RadixTree.empty[K, V]
 
     def combine(x: RadixTree[K, V], y: RadixTree[K, V]) = x merge y
+  }
+
+  implicit def additiveMonoid[K: Key, V: AdditiveSemigroup]: AdditiveMonoid[RadixTree[K, V]] = new AdditiveMonoid[RadixTree[K, V]] {
+    override def zero: RadixTree[K, V] = RadixTree.empty[K, V]
+
+    override def plus(x: RadixTree[K, V], y: RadixTree[K, V]): RadixTree[K, V] =
+      x.mergeWith(y, (x, y) ⇒ AdditiveSemigroup.plus(x, y))
   }
 
   def empty[K: Key, V](implicit K: Key[K]): RadixTree[K, V] =
@@ -422,7 +439,7 @@ object RadixTree {
         def compare(ai: Int, bi: Int) = compareAt(a(ai).prefix, 0, b(bi).prefix, 0)
 
         def collision(ai: Int, bi: Int): Unit = {
-          r(ri) = a(ai).merge(b(bi), f)(self)
+          r(ri) = a(ai).mergeWith(b(bi), f)(self)
           ri += 1
         }
 

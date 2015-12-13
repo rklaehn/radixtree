@@ -7,6 +7,7 @@ lazy val commonSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scala-lang" % "scala-reflect" % scalaVersion.value % "provided",
     "com.rklaehn" %%% "sonicreducer" % "0.2.0",
+    "org.spire-math" %%% "cats" % "0.3.0",
     "org.spire-math" %%% "algebra" % "0.3.1",
     "org.scalatest" %%% "scalatest" % "3.0.0-M7" % "test",
     "org.spire-math" %%% "algebra-laws" % "0.3.1" % "test",

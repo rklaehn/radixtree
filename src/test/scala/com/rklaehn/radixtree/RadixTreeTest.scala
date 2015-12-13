@@ -1,13 +1,10 @@
 package com.rklaehn.radixtree
 
-import algebra.laws.GroupLaws
 import algebra.ring.AdditiveMonoid
-import org.scalacheck.Arbitrary
 import org.scalatest.FunSuite
 import algebra.{Monoid, Eq}
 import algebra.std.all._
 import Instances._
-import org.typelevel.discipline.scalatest.Discipline
 
 class RadixTreeTest extends FunSuite {
 

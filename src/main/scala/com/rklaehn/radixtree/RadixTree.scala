@@ -536,19 +536,8 @@ object RadixTree {
     def indexOfFirstDifference(a: Array[K], ai: Int, b: Array[K], bi: Int, count: Int) =
       if (count == 0 || Order.neqv(a(ai),b(bi))) ai
       else indexOfFirstDifference(a, ai + 1, b, bi + 1, count - 1)
-    override def eqv(x: Array[K], y: Array[K]): Boolean = x.length == y.length && {
-      // todo: use algebra instance once it becomes available
-      var i = 0
-      // scalastyle:off return
-      while(i < x.length) {
-        if(Order.neqv(x(i), y(i)))
-          return false
-        i = 1
-      }
-      // scalastyle:on return
-      true
-    }
-    def hash(e: Array[K]) = {
+    def eqv(x: Array[K], y: Array[K]): Boolean = arrayEqv(x, y)(Hash[K])
+    def hash(e: Array[K]): Int = {
       var hash = MurmurHash3.arraySeed
       var i = 0
       while(i < e.length) {

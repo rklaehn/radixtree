@@ -31,6 +31,35 @@ A big advantage of a radix tree over a sorted map or hash map is that keys are n
 a large number of long strings such as urls, a radix tree will have a space advantage over a HashMap or SortedMap. To
 optimise space usage even more, an interning scheme for keys can be used.
 
+When a tree is used mostly for reading, there is also a method to pack the tree into a very compact representation using interning of keys, values and nodes.
+
+### Space usage benchmark
+
+Here is an example of the space usage of different string sets using the radix tree as well as standard scala collections. 
+
+Numbers from 0 until 10000 is the textual representation of all numbers from 0 to 10000, e.g. "nine thousand, nine hundred ninety"
+
+English words is a list of words of the english language from [here](http://www-01.sil.org/linguistics/wordlists/english/wordlist/wordsEn.txt)
+```
+sbt instrumentedTest/test:run
+
+...
+[info] Numbers from 0 until 10000:
+[info] 	Elements:           1398888
+[info] 	HashSet:            1746600
+[info] 	SortedSet:          1678952
+[info] 	RadixTree:          1229904
+[info] 	RadixTree (packed): 5648
+[info] English words:
+[info] 	Elements:           9644728
+[info] 	HashSet:            13833088
+[info] 	SortedSet:          12713112
+[info] 	RadixTree:          11527264
+[info] 	RadixTree (packed): 2098712
+```
+
+The radix tree is much more efficient regarding space usage than the standard scala collections. It consumes just slightly more space than the elements. When packing the radix tree, it consumes **extremely** little space. Less than the list of words itself!
+
 ## Optimized operations
 
 ### Merge

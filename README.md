@@ -7,7 +7,7 @@
 A generic and fast immutable radix tree, using [algebra](https://github.com/non/algebra) and [cats](https://github.com/non/cats) typeclasses.
 
 ## Simple usage example
-```
+```scala
 import com.rklaehn.radixtree._
 import scala.io.Source
 

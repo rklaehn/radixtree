@@ -9,7 +9,6 @@ import scala.collection.AbstractTraversable
 import scala.reflect.ClassTag
 import scala.util.hashing.{MurmurHash3, Hashing}
 
-// scalastyle:off equals.hash.code
 final class RadixTree[K, V](val prefix: K, private[radixtree] val children: Array[RadixTree[K, V]], private[radixtree] val valueOpt: Opt[V]) extends NoEquals {
 
   def packed(implicit K: Key[K], V: Hash[V]): RadixTree[K, V] = {
@@ -344,12 +343,6 @@ object RadixTree {
   private[this] val _emptyChildren = Array.empty[RadixTree[_, _]]
 
   trait Key[K] extends Eq[K] with Hash[K] { self ⇒
-//
-//    override def eqv(x: K, y: K): Boolean = {
-//      val sx = size(x)
-//      val sy = size(y)
-//      sx == sy && regionMatches(x, 0, y, 0, sx)
-//    }
 
     /**
      * The empty key
@@ -476,67 +469,39 @@ object RadixTree {
   implicit val byteArrayIsKey: Key[Array[Byte]] = ByteArrayKey
 
   private object ByteArrayKey extends Key[Array[Byte]] {
-
-    override val empty: Array[Byte] =
-      Array.empty[Byte]
-
-    override def size(c: Array[Byte]): Int =
-      c.length
-
-    override def slice(a: Array[Byte], from: Int, until: Int): Array[Byte] =
-      a.slice(from, until)
+    override val empty: Array[Byte] = Array.empty[Byte]
+    override def size(c: Array[Byte]): Int = c.length
+    override def slice(a: Array[Byte], from: Int, until: Int): Array[Byte] = a.slice(from, until)
 
     @tailrec
     override def indexOfFirstDifference(a: Array[Byte], ai: Int, b: Array[Byte], bi: Int, count: Int): Int =
       if (count == 0 || a(ai) != b(bi)) ai
       else indexOfFirstDifference(a, ai + 1, b, bi + 1, count - 1)
 
-    override def concat(a: Array[Byte], b: Array[Byte]): Array[Byte] =
-      a ++ b
-
+    override def concat(a: Array[Byte], b: Array[Byte]): Array[Byte] = a ++ b
     override def intern(s: Array[Byte]): Array[Byte] = s
-
-    override def compareAt(a: Array[Byte], ai: Int, b: Array[Byte], bi: Int): Int =
-      a(ai) compare b(bi)
-
-    override def eqv(a: Array[Byte], b: Array[Byte]): Boolean =
-      java.util.Arrays.equals(a, b)
-
-    override def hash(e: Array[Byte]): Int =
-      java.util.Arrays.hashCode(e)
+    override def compareAt(a: Array[Byte], ai: Int, b: Array[Byte], bi: Int): Int = a(ai) compare b(bi)
+    override def eqv(a: Array[Byte], b: Array[Byte]): Boolean = java.util.Arrays.equals(a, b)
+    override def hash(e: Array[Byte]): Int = java.util.Arrays.hashCode(e)
   }
 
   implicit val charArrayIsKey: Key[Array[Char]] = CharArrayKey
 
   private object CharArrayKey extends Key[Array[Char]] {
-
-    override val empty: Array[Char] =
-      Array.empty[Char]
-
-    override def size(c: Array[Char]): Int =
-      c.length
-
-    override def slice(a: Array[Char], from: Int, until: Int): Array[Char] =
-      a.slice(from, until)
+    override val empty: Array[Char] = Array.empty[Char]
+    override def size(c: Array[Char]): Int = c.length
+    override def slice(a: Array[Char], from: Int, until: Int): Array[Char] = a.slice(from, until)
 
     @tailrec
     override def indexOfFirstDifference(a: Array[Char], ai: Int, b: Array[Char], bi: Int, count: Int): Int =
       if (count == 0 || a(ai) != b(bi)) ai
       else indexOfFirstDifference(a, ai + 1, b, bi + 1, count - 1)
 
-    override def concat(a: Array[Char], b: Array[Char]): Array[Char] =
-      a ++ b
-
+    override def concat(a: Array[Char], b: Array[Char]): Array[Char] = a ++ b
     override def intern(s: Array[Char]): Array[Char] = s
-
-    override def compareAt(a: Array[Char], ai: Int, b: Array[Char], bi: Int): Int =
-      a(ai) compare b(bi)
-
-    override def eqv(a: Array[Char], b: Array[Char]): Boolean =
-      java.util.Arrays.equals(a, b)
-
-    override def hash(e: Array[Char]): Int =
-      java.util.Arrays.hashCode(e)
+    override def compareAt(a: Array[Char], ai: Int, b: Array[Char], bi: Int): Int = a(ai) compare b(bi)
+    override def eqv(a: Array[Char], b: Array[Char]): Boolean = java.util.Arrays.equals(a, b)
+    override def hash(e: Array[Char]): Int = java.util.Arrays.hashCode(e)
   }
 
   implicit def arrayIsKey[K: Order: Hash: ClassTag]: Key[Array[K]] =
@@ -572,5 +537,4 @@ object RadixTree {
       hash
     }
   }
-
 }

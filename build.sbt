@@ -6,10 +6,11 @@ lazy val commonSettings = Seq(
   crossScalaVersions := Seq("2.10.5", "2.11.7"),
   libraryDependencies ++= Seq(
     "org.scala-lang" % "scala-reflect" % scalaVersion.value % "provided",
-    "org.scalatest" %%% "scalatest" % "3.0.0-M7" % "test",
-    "org.spire-math" %%% "algebra" % "0.3.1",
-    "org.spire-math" %%% "algebra-std" % "0.3.1" % "test",
     "com.rklaehn" %%% "sonicreducer" % "0.2.0",
+    "org.spire-math" %%% "algebra" % "0.3.1",
+    "org.scalatest" %%% "scalatest" % "3.0.0-M7" % "test",
+    "org.spire-math" %%% "algebra-laws" % "0.3.1" % "test",
+    "org.spire-math" %%% "algebra-std" % "0.3.1" % "test",
 
     // thyme
     "ichi.bench" % "thyme" % "0.1.1" % "test" from "https://github.com/Ichoran/thyme/raw/9ff531411e10c698855ade2e5bde77791dd0869a/Thyme.jar"

@@ -1,9 +1,25 @@
 package com.rklaehn.radixtree
 
+import algebra.laws.GroupLaws
+import org.scalacheck.Arbitrary
 import org.scalatest.FunSuite
 import algebra.{Monoid, Eq}
 import algebra.std.all._
 import Instances._
+import org.typelevel.discipline.scalatest.Discipline
+
+class RadixTreeLawsCheck extends FunSuite with Discipline {
+
+  implicit def arbRadixTree[K: Arbitrary : RadixTree.Key, V: Arbitrary]: Arbitrary[RadixTree[K, V]] = Arbitrary {
+    for {
+      kvs ← Arbitrary.arbitrary[List[(K, V)]]
+    } yield
+    RadixTree(kvs: _*)
+  }
+
+  checkAll("GroupLaws[RadixTree[String, String]].monoid", GroupLaws[RadixTree[String, String]].monoid)
+  checkAll("GroupLaws[RadixTree[Array[Byte], Array[Byte]]].monoid", GroupLaws[RadixTree[Array[Byte], Array[Byte]]].monoid)
+}
 
 class RadixTreeTest extends FunSuite {
 

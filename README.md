@@ -87,6 +87,7 @@ sbt coreJVM/test:run
 
 ### Creation benchmark
 
+This creates a tree from scratch
 ```
 Benchmark comparison (in 10.73 s): Create SortedMap vs. RadixTree
 Significantly different (p ~= 0)
@@ -97,6 +98,7 @@ Significantly different (p ~= 0)
 
 ### Lookup benchmark
 
+This looks up *all* elements
 ```
 Benchmark comparison (in 9.110 s): Lookup SortedMap vs. RadixTree
 Significantly different (p ~= 0)

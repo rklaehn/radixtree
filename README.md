@@ -9,6 +9,8 @@ A generic and fast immutable radix tree, using [algebra](https://github.com/non/
 This is an immutable generic radix tree. It works for both immutable objects which override equals and hashcode, and
 objects that *do not* override equals and hashcode, such as raw byte arrays.
 
+Predefined RadixTree.Key instances are provided for `String`, `Array[Byte]`, `Array[Char]`, `Array[T : Order]`. But it would be relatively trivial to make this work for e.g. `akka.util.ByteString`, `scodec.bits.ByteVector` or even `scodec.bits.BitVector`.
+
 ## Internal representation
 
 A radix tree node consists of a prefix of type K, an optional value of type V, and a (possibly empty) array of children.

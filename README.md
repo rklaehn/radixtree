@@ -6,6 +6,13 @@
 
 A generic and fast immutable radix tree, using [algebra](https://github.com/non/algebra) and [cats](https://github.com/non/cats) typeclasses.
 
+```
+import com.rklaehn.radixtree._
+
+val tree1 = RadixTree("a" -> 1, "b" -> 2)
+println(tree1("a"))
+```
+
 This is an immutable generic radix tree. It works for both immutable objects which override equals and hashcode, and
 objects that *do not* override equals and hashcode, such as raw byte arrays.
 

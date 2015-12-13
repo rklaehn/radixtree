@@ -20,7 +20,7 @@ println(tree.filterPrefix("z").keys.take(10))
 
 ## Word count using AdditiveMonoid instance
 
-```
+```scala
 import com.rklaehn.radixtree._
 import algebra.ring.AdditiveMonoid
 import algebra.std.all._
@@ -37,7 +37,7 @@ println(count.entries.take(10))
 
 None of the methods of java.lang.Object are implemented on RadixTree. Use cats.Show to get a textual representation:
 
-```
+```scala
 import com.rklaehn.radixtree._
 import cats.implicits._
 println(RadixTree("a" -> 1).show)

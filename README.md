@@ -49,7 +49,7 @@ sbt instrumentedTest/test:run
 [info] 	HashSet:            1746600
 [info] 	SortedSet:          1678952
 [info] 	RadixTree:          1229904
-[info] 	RadixTree (packed): 5648
+[info] 	RadixTree (packed): 5648 // <= this is not a typo!
 [info] English words:
 [info] 	Elements:           9644728
 [info] 	HashSet:            13833088

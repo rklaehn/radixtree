@@ -66,7 +66,7 @@ As you can see from the benchmark results, creation and lookup is faster than wi
 
 So a very simple example where a RadixTree is very useful is word completion from a very large dictionary.
 
-Benchmarks can be run using
+The benchmarks are the 109583 words of the english language from  [here](http://www-01.sil.org/linguistics/wordlists/english/wordlist/wordsEn.txt). They can be run using
 ```
 sbt coreJVM/test:run
 ```
@@ -74,7 +74,7 @@ sbt coreJVM/test:run
 ### Creation benchmark
 
 ```
-Benchmark comparison (in 10.73 s): Create 1000 SortedMap vs. RadixTree
+Benchmark comparison (in 10.73 s): Create SortedMap vs. RadixTree
 Significantly different (p ~= 0)
   Time ratio:    0.81548   95% CI 0.79274 - 0.83821   (n=20)
     First     47.99 ms   95% CI 47.14 ms - 48.84 ms
@@ -84,7 +84,7 @@ Significantly different (p ~= 0)
 ### Lookup benchmark
 
 ```
-Benchmark comparison (in 9.110 s): Lookup 1000 SortedMap vs. RadixTree
+Benchmark comparison (in 9.110 s): Lookup SortedMap vs. RadixTree
 Significantly different (p ~= 0)
   Time ratio:    0.34484   95% CI 0.32363 - 0.36605   (n=20)
     First     46.24 ms   95% CI 44.63 ms - 47.86 ms

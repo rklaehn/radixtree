@@ -51,8 +51,9 @@ final class RadixTree[K, V](val prefix: K, private[radixtree] val children: Arra
 
   def filterPrefixesOf(query: K)(implicit K: Key[K]): RadixTree[K, V] = {
     val ft = filterPrefixesOf0(this, query, 0)
-
-    if (ft.prefix == K.empty && ! ft.children.isEmpty)  ft.children.head
+    if (ft.prefix == K.empty)
+      if (! ft.children.isEmpty) ft.children.head
+      else RadixTree.empty
     else ft
   }
 
@@ -147,7 +148,7 @@ final class RadixTree[K, V](val prefix: K, private[radixtree] val children: Arra
           copy(children = RadixTree.emptyChildren)
         }
       }
-    } else copy(children = RadixTree.emptyChildren)
+    } else RadixTree.empty
   }
 
   def modifyOrRemove(f: (K, V, Int) => Option[V])(implicit K: Key[K]): RadixTree[K, V] =

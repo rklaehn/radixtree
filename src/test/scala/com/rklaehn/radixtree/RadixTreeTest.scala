@@ -163,6 +163,12 @@ class RadixTreeTest extends FunSuite {
     assert(RadixTree("1" -> 1, "12" -> 12).filterPrefix("123").isEmpty)
   }
 
+  test("filterPrefixesOf") {
+    assert(RadixTree("1" -> 1).entries.toSeq === tree.filterPrefixesOf("1x").entries.toSeq)
+    assert(RadixTree("1" -> 1).filterPrefixesOf("foo").isEmpty)
+    assert(RadixTree("1" -> 1, "12" -> 12).filterPrefixesOf("2").isEmpty)
+  }
+
   test("modifyOrRemove") {
     val tree1 = tree.modifyOrRemove { case (k, v, _) => Some(v * 2) }
     val tree2 = tree.modifyOrRemove { case (k, v, _) => None }

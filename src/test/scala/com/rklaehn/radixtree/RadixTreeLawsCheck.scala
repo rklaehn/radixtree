@@ -1,7 +1,7 @@
 package com.rklaehn.radixtree
 
 import algebra.laws.GroupLaws
-import algebra.std.all._
+import algebra.instances.all._
 import org.scalacheck.Arbitrary
 import org.scalatest.FunSuite
 import org.typelevel.discipline.scalatest.Discipline

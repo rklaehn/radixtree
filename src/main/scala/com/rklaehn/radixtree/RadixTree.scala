@@ -357,7 +357,7 @@ object RadixTree {
     val reducer = Reducer[RadixTree[K, V]](_ merge _)
     for ((k, v) <- kvs)
       reducer.apply(singleton(k, v))
-    reducer.result().getOrElse(empty[K, V])
+    reducer.resultOrElse(empty[K, V])
   }
 
   private def emptyChildren[K, V]: Array[RadixTree[K, V]] = _emptyChildren.asInstanceOf[Array[RadixTree[K, V]]]

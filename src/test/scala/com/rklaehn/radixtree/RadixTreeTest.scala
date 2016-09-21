@@ -3,7 +3,7 @@ package com.rklaehn.radixtree
 import algebra.ring.AdditiveMonoid
 import org.scalatest.FunSuite
 import algebra.{Monoid, Eq}
-import algebra.std.all._
+import algebra.instances.all._
 import Instances._
 
 class RadixTreeTest extends FunSuite {

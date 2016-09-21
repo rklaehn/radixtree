@@ -3,7 +3,7 @@ language: scala
 scala:
   - "2.11.7"
 script:
-  - sbt clean coverage coreJVM/test
+  - sbt clean coverage coreJVM/test coverageReport
 after_success:
   - pip install --user codecov && codecov
 branches:

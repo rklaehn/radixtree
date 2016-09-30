@@ -57,7 +57,7 @@ final class RadixTree[K, V](val prefix: K, private[radixtree] val children: Arra
     else ft
   }
 
-  def subtreeWithPrefix(prefix: K)(implicit K: Key[K]) = {
+  def subtreeWithPrefix(prefix: K)(implicit K: Key[K]): RadixTree[K, V] = {
     val tree1 = filterPrefix(prefix)
     if (K.startsWith(tree1.prefix, prefix, 0))
       tree1.copy(prefix = K.slice(tree1.prefix, K.size(prefix), K.size(tree1.prefix)))

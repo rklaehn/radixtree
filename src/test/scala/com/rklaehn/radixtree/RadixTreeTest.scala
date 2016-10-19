@@ -234,6 +234,12 @@ class RadixTreeTest extends FunSuite {
     assert(t.getOrNull("ba") eq null)
   }
 
+  test("getOrDefault") {
+    val t = RadixTree.singleton("ab", 3)
+    assert(t.getOrDefault("ab", 7) == 3)
+    assert(t.getOrDefault("ba", 7) == 7)
+  }
+
   test("eq") {
     Eq.eqv(tree, tree.packed)
   }

@@ -229,6 +229,13 @@ final class RadixTree[K, V](val prefix: K, private[radixtree] val children: Arra
 
   def get(key: K)(implicit K: Key[K]): Option[V] = get0(key, 0).toOption
 
+  def getOrNull(key: K)(implicit K: Key[K]): V = get0(key, 0).ref
+
+  def getOrDefault[VV >: V](key: K, default: VV)(implicit K: Key[K]): VV = {
+    val o = get0(key, 0)
+    if (o.isDefined) o.get else default
+  }
+
   @tailrec
   private def get0(key: K, offset: Int)(implicit K: Key[K]): Opt[V] =
     if (K.startsWith(key, prefix, offset)) {

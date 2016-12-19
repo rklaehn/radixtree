@@ -79,6 +79,8 @@ final class RadixTree[K, V](val prefix: K, private[radixtree] val children: Arra
     def foreach[U](f: K => U) = foreachKey(K.empty, f)
   }
 
+  def directChildrenValues = children.flatMap(_.valueOpt.toOption)
+
   private def foreachChild[U](f: RadixTree[K, V] => U) {
     var i = 0
     while (i < children.length) {

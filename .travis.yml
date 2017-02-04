@@ -1,7 +1,8 @@
 sudo: false
 language: scala
+dist: trusty
 scala:
-  - "2.11.7"
+  - "2.12.1"
 script:
   - sbt clean coverage coreJVM/test coverageReport
 after_success:
@@ -12,3 +13,5 @@ branches:
 cache:
   directories:
     $HOME/.ivy2/cache
+jdk:
+  - openjdk8

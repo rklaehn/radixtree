@@ -1,11 +1,12 @@
 package com.rklaehn.radixtree
 
-import algebra.laws.GroupLaws
 import algebra.instances.all._
 import org.scalacheck.Arbitrary
 import org.scalatest.FunSuite
 import org.typelevel.discipline.scalatest.Discipline
 import Instances._
+import cats.kernel.laws.GroupLaws
+import algebra.laws.RingLaws
 
 class RadixTreeLawsCheck extends FunSuite with Discipline {
 
@@ -18,6 +19,6 @@ class RadixTreeLawsCheck extends FunSuite with Discipline {
 
   checkAll("GroupLaws[RadixTree[String, String]].monoid", GroupLaws[RadixTree[String, String]].monoid)
   checkAll("GroupLaws[RadixTree[Array[Byte], Array[Byte]]].monoid", GroupLaws[RadixTree[Array[Byte], Array[Byte]]].monoid)
-  checkAll("RingLaws[RadixTree[String, Byte]].additiveMonoid", GroupLaws[RadixTree[String, Short]].additiveMonoid)
-  checkAll("RingLaws[RadixTree[Array[Byte], Int]].additiveMonoid", GroupLaws[RadixTree[String, Int]].additiveMonoid)
+  checkAll("RingLaws[RadixTree[String, Byte]].additiveMonoid", RingLaws[RadixTree[String, Short]].additiveMonoid)
+  checkAll("RingLaws[RadixTree[Array[Byte], Int]].additiveMonoid", RingLaws[RadixTree[String, Int]].additiveMonoid)
 }

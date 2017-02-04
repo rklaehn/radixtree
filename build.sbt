@@ -9,8 +9,8 @@ lazy val commonSettings = Seq(
     "com.rklaehn" %%% "sonicreducer" % "0.5.0",
     "org.typelevel" %%% "cats" % "0.9.0",
     "org.typelevel" %%% "algebra" % "0.7.0",
-    "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
     "org.typelevel" %%% "algebra-laws" % "0.7.0" % "test",
+    "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
 
     // thyme
     "ichi.bench" % "thyme" % "0.1.1" % "test" from "https://github.com/Ichoran/thyme/raw/9ff531411e10c698855ade2e5bde77791dd0869a/Thyme.jar"

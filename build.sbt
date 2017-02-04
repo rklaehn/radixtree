@@ -2,15 +2,15 @@ import ReleaseTransformations._
 
 lazy val commonSettings = Seq(
   organization := "com.rklaehn",
-  scalaVersion := "2.11.8",
-  crossScalaVersions := Seq("2.10.5", "2.11.8"),
+  scalaVersion := "2.12.1",
+  crossScalaVersions := Seq("2.11.8", "2.12.1"),
   libraryDependencies ++= Seq(
     "org.scala-lang" % "scala-reflect" % scalaVersion.value % "provided",
-    "com.rklaehn" %%% "sonicreducer" % "0.4.0",
-    "org.typelevel" %%% "cats" % "0.8.0",
-    "org.typelevel" %%% "algebra" % "0.5.1",
-    "org.scalatest" %%% "scalatest" % "3.0.0" % "test",
-    "org.typelevel" %%% "algebra-laws" % "0.5.1" % "test",
+    "com.rklaehn" %%% "sonicreducer" % "0.5.0",
+    "org.typelevel" %%% "cats" % "0.9.0",
+    "org.typelevel" %%% "algebra" % "0.7.0",
+    "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
+    "org.typelevel" %%% "algebra-laws" % "0.7.0" % "test",
 
     // thyme
     "ichi.bench" % "thyme" % "0.1.1" % "test" from "https://github.com/Ichoran/thyme/raw/9ff531411e10c698855ade2e5bde77791dd0869a/Thyme.jar"

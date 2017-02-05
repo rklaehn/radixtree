@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/rklaehn/radixtree.png)](https://travis-ci.org/rklaehn/radixtree)
 [![codecov.io](http://codecov.io/github/rklaehn/radixtree/coverage.svg?branch=master)](http://codecov.io/github/rklaehn/radixtree?branch=master)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.rklaehn/radixtree_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.rklaehn/radixtree_2.11)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.rklaehn/radixtree_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.rklaehn/radixtree_2.12)
 
 # radixtree
 

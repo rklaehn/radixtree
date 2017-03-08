@@ -157,6 +157,11 @@ class RadixTreeTest extends FunSuite {
     assert(kvs.map(_._2).toSet === tree.values.toSet)
   }
 
+  test("directChildValues"){
+    assert((0 until 10) === tree.directChildrenValues)
+    assert((0 until 10) === tree1k.directChildrenValues)
+  }
+
   test("filterPrefix") {
     assert(kvs.filter { case (k, v) => k.startsWith("1") }.toSeq === tree.filterPrefix("1").entries.toSeq)
     assert(RadixTree("1" -> 1).filterPrefix("foo").isEmpty)

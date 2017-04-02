@@ -36,7 +36,7 @@ object RadixTreeVisualization extends App with RefTreeImplicits {
   )
 
   val queueAnimation: Animation = Animation.startWithSequence(trees1)
-    .build()
+    .build(Diagram(_).withAnchor("queue").withCaption("keywords"))
 
   renderer.render("radixtree-animation", queueAnimation)
 }

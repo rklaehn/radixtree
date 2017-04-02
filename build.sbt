@@ -2,7 +2,7 @@ import ReleaseTransformations._
 
 lazy val commonSettings = Seq(
   organization := "com.rklaehn",
-  scalaVersion := "2.12.1",
+  scalaVersion := "2.11.8",
   crossScalaVersions := Seq("2.11.8", "2.12.1"),
   libraryDependencies ++= Seq(
     "org.scala-lang" % "scala-reflect" % scalaVersion.value % "provided",
@@ -10,10 +10,10 @@ lazy val commonSettings = Seq(
     "org.typelevel" %%% "cats" % "0.9.0",
     "org.typelevel" %%% "algebra" % "0.7.0",
     "org.typelevel" %%% "algebra-laws" % "0.7.0" % "test",
-    "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
+    "org.scalatest" %%% "scalatest" % "3.0.1" % "test"
 
     // thyme
-    "ichi.bench" % "thyme" % "0.1.1" % "test" from "https://github.com/Ichoran/thyme/raw/9ff531411e10c698855ade2e5bde77791dd0869a/Thyme.jar"
+//    "ichi.bench" % "thyme" % "0.1.1" % "test" from "https://github.com/Ichoran/thyme/raw/48cda694b27818000589669b41a019e57750f4ff/Thyme.jar"
   ),
   scalacOptions ++= Seq(
     "-deprecation",
@@ -30,13 +30,13 @@ lazy val commonSettings = Seq(
   publishMavenStyle := true,
   publishArtifact in Test := false,
   pomIncludeRepository := Function.const(false),
-  publishTo <<= version { v =>
+  publishTo := version { v =>
     val nexus = "https://oss.sonatype.org/"
     if (v.trim.endsWith("SNAPSHOT"))
       Some("Snapshots" at nexus + "content/repositories/snapshots")
     else
       Some("Releases" at nexus + "service/local/staging/deploy/maven2")
-  },
+  }.value,
   pomExtra :=
     <scm>
       <url>git@github.com:rklaehn/radixtree.git</url>
@@ -64,13 +64,22 @@ lazy val commonSettings = Seq(
     ReleaseStep(action = Command.process("sonatypeReleaseAll", _)),
     pushChanges))
 
+lazy val refTreeSettings = Seq(
+  resolvers ++= Seq(
+    Resolver.bintrayRepo("stanch", "maven"),
+    Resolver.bintrayRepo("drdozer", "maven")
+  ),
+  libraryDependencies += "org.stanch" %% "reftree" % "0.8.2",
+  scalaVersion := "2.11.8"
+)
+
 lazy val noPublish = Seq(
   publish := {},
   publishLocal := {},
   publishArtifact := false)
 
 lazy val root = project.in(file("."))
-  .aggregate(coreJVM, coreJS, instrumentedTest)
+  .aggregate(coreJVM, coreJS, instrumentedTest, reftreeVisualization)
   .settings(name := "root")
   .settings(commonSettings: _*)
   .settings(noPublish: _*)
@@ -86,13 +95,20 @@ lazy val instrumentedTest = project.in(file("instrumentedTest"))
   .settings(noPublish: _*)
   .dependsOn(coreJVM)
 
+lazy val reftreeVisualization = project.in(file("reftreeVisualization"))
+  .settings(name := "reftreeVisualization")
+  .settings(commonSettings: _*)
+  .settings(refTreeSettings: _*)
+  .settings(noPublish: _*)
+  .dependsOn(coreJVM)
+
 lazy val instrumentedTestSettings = {
   def makeAgentOptions(classpath:Classpath) : String = {
     val jammJar = classpath.map(_.data).filter(_.toString.contains("jamm")).head
     s"-javaagent:$jammJar"
   }
   Seq(
-    javaOptions in Test <+= (dependencyClasspath in Test).map(makeAgentOptions),
+    javaOptions in Test += (dependencyClasspath in Test).map(makeAgentOptions).value,
       libraryDependencies += "com.github.jbellis" % "jamm" % "0.3.0" % "test",
       fork := true
     )

@@ -4,7 +4,15 @@ import org.github.jamm.MemoryMeter
 import scala.collection.immutable.SortedSet
 import scala.io.Source
 
+object TestData {
+
+  val de = Source.fromInputStream(getClass.getResourceAsStream("/germanwords.txt"), "iso-8859-1").getLines.toArray
+
+  val en = Source.fromInputStream(getClass.getResourceAsStream("/englishWords.txt")).getLines.toArray
+}
+
 object SizeTest extends App {
+
   implicit object eqHash extends Hash[Unit] {
 
     override def hash(x: Unit): Int = 0
@@ -16,8 +24,8 @@ object SizeTest extends App {
   lazy val overhead = mm.measure(new java.lang.Object)
   lazy val pointerSize = (mm.measure(new Array[java.lang.Object](256)) - mm.measure(new Array[java.lang.Object](128))) / 128
   // lazy val englishWords = Source.fromURL("http://www-01.sil.org/linguistics/wordlists/english/wordlist/wordsEn.txt").getLines.toArray
-  val englishWords = Source.fromInputStream(getClass.getResourceAsStream("englishWords.txt")).getLines.toArray
-  println(englishWords.take(10))
+  val englishWords = TestData.de
+  println(englishWords.take(10).toIndexedSeq)
 
   def test(text: String, names: Seq[String]): Unit = {
     val pairs = names.map(name => name -> (())).toArray
@@ -45,5 +53,6 @@ object SizeTest extends App {
   }
 
   test("Numbers from 0 until 10000:", (0 until 10000).map(NumberToWord.apply))
-  test("English words:", englishWords)
+  test(TestData.en.length + " English words:", TestData.en)
+  test(TestData.de.length + " German words:", TestData.de)
 }

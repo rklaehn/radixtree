@@ -10,10 +10,10 @@ lazy val commonSettings = Seq(
     "org.typelevel" %%% "cats" % "0.9.0",
     "org.typelevel" %%% "algebra" % "0.7.0",
     "org.typelevel" %%% "algebra-laws" % "0.7.0" % "test",
-    "org.scalatest" %%% "scalatest" % "3.0.1" % "test"
+    "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
 
     // thyme
-//    "ichi.bench" % "thyme" % "0.1.1" % "test" from "https://github.com/Ichoran/thyme/raw/48cda694b27818000589669b41a019e57750f4ff/Thyme.jar"
+    "ichi.bench" % "thyme" % "0.1.1" % "test" from "https://github.com/Ichoran/thyme/raw/48cda694b27818000589669b41a019e57750f4ff/Thyme.jar"
   ),
   scalacOptions ++= Seq(
     "-deprecation",

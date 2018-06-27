@@ -1,4 +1,6 @@
 import ReleaseTransformations._
+// shadow sbt-scalajs' crossProject and CrossType from Scala.js 0.6.x
+import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 lazy val commonSettings = Seq(
   organization := "com.rklaehn",
@@ -30,13 +32,12 @@ lazy val commonSettings = Seq(
   publishMavenStyle := true,
   publishArtifact in Test := false,
   pomIncludeRepository := Function.const(false),
-  publishTo <<= version { v =>
-    val nexus = "https://oss.sonatype.org/"
-    if (v.trim.endsWith("SNAPSHOT"))
-      Some("Snapshots" at nexus + "content/repositories/snapshots")
+  publishTo := Some(
+    if (isSnapshot.value)
+      Opts.resolver.sonatypeSnapshots
     else
-      Some("Releases" at nexus + "service/local/staging/deploy/maven2")
-  },
+      Opts.resolver.sonatypeStaging
+  ),
   pomExtra :=
     <scm>
       <url>git@github.com:rklaehn/radixtree.git</url>
@@ -54,14 +55,14 @@ lazy val commonSettings = Seq(
     checkSnapshotDependencies,
     inquireVersions,
     runClean,
-    ReleaseStep(action = Command.process("package", _)),
+    ReleaseStep(action = Command.process("package", _), enableCrossBuild = true),
     setReleaseVersion,
     commitReleaseVersion,
     tagRelease,
-    ReleaseStep(action = Command.process("publishSigned", _)),
+    ReleaseStep(action = Command.process("publishSigned", _), enableCrossBuild = true),
     setNextVersion,
     commitNextVersion,
-    ReleaseStep(action = Command.process("sonatypeReleaseAll", _)),
+    ReleaseStep(action = Command.process("sonatypeReleaseAll", _), enableCrossBuild = true),
     pushChanges))
 
 lazy val noPublish = Seq(
@@ -75,7 +76,8 @@ lazy val root = project.in(file("."))
   .settings(commonSettings: _*)
   .settings(noPublish: _*)
 
-lazy val core = crossProject.crossType(CrossType.Pure).in(file("."))
+lazy val core = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Pure).in(file("."))
   .settings(name := "radixtree")
   .settings(commonSettings: _*)
 
@@ -87,15 +89,16 @@ lazy val instrumentedTest = project.in(file("instrumentedTest"))
   .dependsOn(coreJVM)
 
 lazy val instrumentedTestSettings = {
-  def makeAgentOptions(classpath:Classpath) : String = {
+  def makeAgentOptions(classpath: Classpath): String = {
     val jammJar = classpath.map(_.data).filter(_.toString.contains("jamm")).head
     s"-javaagent:$jammJar"
   }
+
   Seq(
-    javaOptions in Test <+= (dependencyClasspath in Test).map(makeAgentOptions),
-      libraryDependencies += "com.github.jbellis" % "jamm" % "0.3.0" % "test",
-      fork := true
-    )
+    javaOptions in Test += (dependencyClasspath in Test).map(makeAgentOptions).value,
+    libraryDependencies += "com.github.jbellis" % "jamm" % "0.3.0" % "test",
+    fork := true
+  )
 }
 
 lazy val coreJVM = core.jvm

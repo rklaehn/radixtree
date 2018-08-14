@@ -30,9 +30,9 @@ lazy val commonSettings = Seq(
   publishMavenStyle := true,
   publishArtifact in Test := false,
   pomIncludeRepository := Function.const(false),
-  publishTo <<= version { v =>
+  publishTo := {
     val nexus = "https://oss.sonatype.org/"
-    if (v.trim.endsWith("SNAPSHOT"))
+    if (version.value.trim.endsWith("SNAPSHOT"))
       Some("Snapshots" at nexus + "content/repositories/snapshots")
     else
       Some("Releases" at nexus + "service/local/staging/deploy/maven2")
@@ -92,7 +92,7 @@ lazy val instrumentedTestSettings = {
     s"-javaagent:$jammJar"
   }
   Seq(
-    javaOptions in Test <+= (dependencyClasspath in Test).map(makeAgentOptions),
+    javaOptions in Test += makeAgentOptions((dependencyClasspath in Test).value),
       libraryDependencies += "com.github.jbellis" % "jamm" % "0.3.0" % "test",
       fork := true
     )

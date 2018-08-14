@@ -7,9 +7,9 @@ lazy val commonSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scala-lang" % "scala-reflect" % scalaVersion.value % "provided",
     "com.rklaehn" %%% "sonicreducer" % "0.5.0",
-    "org.typelevel" %%% "cats" % "0.9.0",
-    "org.typelevel" %%% "algebra" % "0.7.0",
-    "org.typelevel" %%% "algebra-laws" % "0.7.0" % "test",
+    "org.typelevel" %%% "cats-core" % "1.0.1",
+    "org.typelevel" %%% "algebra" % "1.0.0",
+    "org.typelevel" %%% "algebra-laws" % "1.0.0" % "test",
     "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
 
     // thyme

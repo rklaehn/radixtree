@@ -29,6 +29,7 @@ lazy val commonSettings = Seq(
   releasePublishArtifactsAction := PgpKeys.publishSigned.value,
   publishMavenStyle := true,
   publishArtifact in Test := false,
+  publishTo := sonatypePublishTo.value,
   pomIncludeRepository := Function.const(false),
   publishTo := {
     val nexus = "https://oss.sonatype.org/"

@@ -19,7 +19,7 @@ trait Hash[@sp A] extends Any with Eq[A] with Serializable { self =>
     * Constructs a new `Eq` instance for type `B` where 2 elements are
     * equivalent iff `eqv(f(x), f(y))`.
     */
-  override def on[@sp B](f: B => A): Hash[B] =
+  def on[@sp B](f: B => A): Hash[B] =
     new Hash[B] {
       def eqv(x: B, y: B): Boolean = self.eqv(f(x), f(y))
       def hash(x: B): Int = self.hash(f(x))

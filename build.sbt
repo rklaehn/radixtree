@@ -7,9 +7,9 @@ lazy val commonSettings = Seq(
   libraryDependencies ++= Seq(
     "org.scala-lang" % "scala-reflect" % scalaVersion.value % "provided",
     "com.rklaehn" %%% "sonicreducer" % "0.5.0",
-    "org.typelevel" %%% "cats" % "0.9.0",
-    "org.typelevel" %%% "algebra" % "0.7.0",
-    "org.typelevel" %%% "algebra-laws" % "0.7.0" % "test",
+    "org.typelevel" %%% "cats-core" % "1.0.1",
+    "org.typelevel" %%% "algebra" % "1.0.0",
+    "org.typelevel" %%% "algebra-laws" % "1.0.0" % "test",
     "org.scalatest" %%% "scalatest" % "3.0.1" % "test",
 
     // thyme
@@ -30,9 +30,9 @@ lazy val commonSettings = Seq(
   publishMavenStyle := true,
   publishArtifact in Test := false,
   pomIncludeRepository := Function.const(false),
-  publishTo <<= version { v =>
+  publishTo := {
     val nexus = "https://oss.sonatype.org/"
-    if (v.trim.endsWith("SNAPSHOT"))
+    if (version.value.trim.endsWith("SNAPSHOT"))
       Some("Snapshots" at nexus + "content/repositories/snapshots")
     else
       Some("Releases" at nexus + "service/local/staging/deploy/maven2")
@@ -92,7 +92,7 @@ lazy val instrumentedTestSettings = {
     s"-javaagent:$jammJar"
   }
   Seq(
-    javaOptions in Test <+= (dependencyClasspath in Test).map(makeAgentOptions),
+    javaOptions in Test += makeAgentOptions((dependencyClasspath in Test).value),
       libraryDependencies += "com.github.jbellis" % "jamm" % "0.3.0" % "test",
       fork := true
     )

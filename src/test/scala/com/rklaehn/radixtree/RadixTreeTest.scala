@@ -1,14 +1,16 @@
 package com.rklaehn.radixtree
 
 import algebra.{Monoid, Eq}
+import algebra.instances.array.arrayEq
 import algebra.instances.byte._
 import algebra.instances.char._
 import algebra.instances.int._
 import algebra.instances.short._
 import algebra.instances.string._
+import algebra.instances.tuple._
+import algebra.instances.unit._
 import algebra.ring.AdditiveMonoid
 import cats.kernel.Hash
-import cats.kernel.instances.unit._
 import org.scalatest.FunSuite
 
 import Instances._

@@ -1,6 +1,8 @@
 package com.rklaehn
 
 import algebra.Eq
+import cats.kernel.Hash
+
 import scala.reflect.ClassTag
 import scala.util.hashing.MurmurHash3
 

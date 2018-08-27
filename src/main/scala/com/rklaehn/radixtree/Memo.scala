@@ -3,6 +3,7 @@ package com.rklaehn.radixtree
 import algebra.Eq
 
 import scala.util.hashing.Hashing
+import cats.kernel.Hash
 
 private object Memo {
 

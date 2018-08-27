@@ -1,9 +1,16 @@
 package com.rklaehn.radixtree
 
-import algebra.ring.AdditiveMonoid
-import org.scalatest.FunSuite
 import algebra.{Monoid, Eq}
-import algebra.instances.all._
+import algebra.instances.byte._
+import algebra.instances.char._
+import algebra.instances.int._
+import algebra.instances.short._
+import algebra.instances.string._
+import algebra.ring.AdditiveMonoid
+import cats.kernel.Hash
+import cats.kernel.instances.unit._
+import org.scalatest.FunSuite
+
 import Instances._
 
 class RadixTreeTest extends FunSuite {

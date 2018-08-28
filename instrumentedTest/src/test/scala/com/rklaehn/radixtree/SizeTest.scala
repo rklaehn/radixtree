@@ -1,5 +1,7 @@
 package com.rklaehn.radixtree
+
 import org.github.jamm.MemoryMeter
+import cats.kernel.Hash
 
 import scala.collection.immutable.SortedSet
 import scala.io.Source

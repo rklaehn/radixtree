@@ -2,6 +2,8 @@ package com.rklaehn.radixtree
 
 import algebra.ring.{AdditiveMonoid, AdditiveSemigroup}
 import algebra.{Order, Monoid, Eq}
+import cats.Show
+import cats.kernel.Hash
 import com.rklaehn.radixtree.RadixTree.Key
 import com.rklaehn.sonicreducer.Reducer
 
@@ -9,7 +11,6 @@ import scala.annotation.tailrec
 import scala.collection.AbstractTraversable
 import scala.reflect.ClassTag
 import scala.util.hashing.MurmurHash3
-import cats.Show
 
 final class RadixTree[K, V](val prefix: K, private[radixtree] val children: Array[RadixTree[K, V]], private[radixtree] val valueOpt: Opt[V]) extends NoEquals {
 

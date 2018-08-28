@@ -1,5 +1,7 @@
 package com.rklaehn.radixtree
 
+import cats.kernel.Hash
+import cats.kernel.instances.unit._
 import ichi.bench.Thyme
 
 import scala.collection.immutable.{HashMap, SortedMap}

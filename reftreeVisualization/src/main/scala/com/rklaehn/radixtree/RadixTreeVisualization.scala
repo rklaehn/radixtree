@@ -18,8 +18,8 @@ object RadixTreeVisualization extends App {
   }
 
   val renderer = Renderer(
-    renderingOptions = RenderingOptions(density = 200),
-    animationOptions = AnimationOptions(keyFrameDuration = 2000.milliseconds, interpolationDuration = 1000.milliseconds, framesPerSecond = 2, loop = true),
+    renderingOptions = RenderingOptions(density = 100),
+    animationOptions = AnimationOptions(keyFrameDuration = 1000.milliseconds, interpolationDuration = 1000.milliseconds, framesPerSecond = 4, loop = true),
     format = "gif",
     directory = Paths.get("target")
   )
@@ -54,9 +54,9 @@ object RadixTreeVisualization extends App {
     val en = build(Seq("val","var","def"))
     val de = build(Seq("unveränderliche", "opportunistisch", "verfahrensweise"))
     val global = en.prepend("en.") merge de.prepend("de.")
-    Diagram(identifierDe).render("id_de")
-    Diagram(identifierEn).render("id_en")
-    Diagram(identifier).render("id")
+    Diagram(de).render("id_de")
+    Diagram(en).render("id_en")
+    Diagram(global).render("id")
 
   }
   buildSimple()

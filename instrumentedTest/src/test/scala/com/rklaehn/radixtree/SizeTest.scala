@@ -28,7 +28,7 @@ object SizeTest extends App {
     val tree1 = RadixTree(pairs: _*)
     val tree2 = tree1.packed
     val hashSet = pairs.toSet
-    val sortedSet = pairs.to[SortedSet]
+    val sortedSet = SortedSet(pairs: _*)
     //    val tree1c = RadixTree(pairsC: _*)
     //    val tree2c = tree1c.packed
     //    val tree1b = RadixTree(pairsB: _*)

@@ -1,21 +1,13 @@
 package com.rklaehn.radixtree
 
-import algebra.{Monoid, Eq}
-import algebra.instances.array.arrayEq
-import algebra.instances.byte._
-import algebra.instances.char._
-import algebra.instances.int._
-import algebra.instances.short._
-import algebra.instances.string._
-import algebra.instances.tuple._
-import algebra.instances.unit._
-import algebra.ring.AdditiveMonoid
-import cats.kernel.Hash
-import org.scalatest.FunSuite
+
+import cats._
+import cats.instances.all._
+import org.scalatest.funsuite.AnyFunSuite
 
 import Instances._
 
-class RadixTreeTest extends FunSuite {
+class RadixTreeTest extends AnyFunSuite {
 
   implicit class StringOps(underlying: String) {
     def toBytes = underlying.getBytes("UTF-8")
@@ -273,8 +265,8 @@ class RadixTreeTest extends FunSuite {
     import scala.io.Source
     val text = Source.fromURL("http://classics.mit.edu/Homer/odyssey.mb.txt").getLines
     val words = text.flatMap(_.split(' ')).filterNot(_.isEmpty)
-    val m = AdditiveMonoid[RadixTree[String, Int]]
-    val count = words.map(x ⇒ RadixTree(x → 1)).reduce(m.plus)
+    val m = Monoid[RadixTree[String, Int]]
+    val count = words.map(x ⇒ RadixTree(x → 1)).reduce(m.combine)
     println(count.entries.take(10))
   }
   test("arrayEq") {

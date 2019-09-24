@@ -1,7 +1,7 @@
 package com.rklaehn.radixtree
 
-import algebra.ring.{AdditiveMonoid, AdditiveSemigroup}
-import algebra.{Order, Monoid, Eq}
+import cats.{Monoid, Semigroup}
+import cats.kernel._
 import cats.Show
 import cats.kernel.Hash
 import com.rklaehn.radixtree.RadixTree.Key
@@ -375,13 +375,6 @@ object RadixTree {
     def empty = RadixTree.empty[K, V]
 
     def combine(x: RadixTree[K, V], y: RadixTree[K, V]) = x merge y
-  }
-
-  implicit def additiveMonoid[K: Key, V: AdditiveSemigroup]: AdditiveMonoid[RadixTree[K, V]] = new AdditiveMonoid[RadixTree[K, V]] {
-    override def zero: RadixTree[K, V] = RadixTree.empty[K, V]
-
-    override def plus(x: RadixTree[K, V], y: RadixTree[K, V]): RadixTree[K, V] =
-      x.mergeWith(y, (x, y) ⇒ AdditiveSemigroup.plus(x, y))
   }
 
   def empty[K: Key, V](implicit K: Key[K]): RadixTree[K, V] =

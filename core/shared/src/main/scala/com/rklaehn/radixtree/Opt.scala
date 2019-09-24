@@ -1,6 +1,6 @@
 package com.rklaehn.radixtree
 
-import algebra.Eq
+import cats.kernel.Eq
 
 private object Opt {
   def apply[A](a: A): Opt[A] = new Opt(a)

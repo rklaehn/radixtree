@@ -1,9 +1,7 @@
 package com.rklaehn.radixtree
 
-import algebra.Eq
-
 import scala.util.hashing.Hashing
-import cats.kernel.Hash
+import cats.kernel.{Eq, Hash}
 
 private object Memo {
 

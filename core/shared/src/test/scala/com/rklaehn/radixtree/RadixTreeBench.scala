@@ -2,7 +2,6 @@ package com.rklaehn.radixtree
 
 import cats.kernel.Hash
 import cats.kernel.instances.unit._
-import ichi.bench.Thyme
 
 import scala.collection.immutable.{HashMap, SortedMap}
 import scala.io.Source
@@ -19,7 +18,7 @@ object RadixTreeBench extends App {
     override def hash(x: Unit): Int = 0
   }
 
-  lazy val th = Thyme.warmed(verbose = println, warmth = Thyme.HowWarm.BenchOff)
+  //lazy val th = Thyme.warmed(verbose = println, warmth = Thyme.HowWarm.BenchOff)
 
   val kvs = names.map(s => s -> (()))
 
@@ -83,12 +82,4 @@ object RadixTreeBench extends App {
     radixTree.filterKeysContaining("one")
   }
 
-  th.pbenchOffWarm("Create 1000 SortedMap vs. RadixTree")(th.Warm(create0(kvs)))(th.Warm(create1(kvs)))
-  th.pbenchOffWarm("Lookup 1000 SortedMap vs. RadixTree")(th.Warm(lookup0()))(th.Warm(lookup1()))
-
-  th.pbenchOffWarm("FilterPrefix HashMap vs. RadixTree")(th.Warm(filterPrefixH()))(th.Warm(filterPrefixR()))
-  th.pbenchOffWarm("FilterPrefix SortedMap vs. RadixTree")(th.Warm(filterPrefixS()))(th.Warm(filterPrefixR()))
-
-  th.pbenchOffWarm("FilterContains HashMap vs. RadixTree")(th.Warm(filterContainsH()))(th.Warm(filterContainsR()))
-  th.pbenchOffWarm("FilterContains SortedMap vs. RadixTree")(th.Warm(filterContainsS()))(th.Warm(filterContainsR()))
 }

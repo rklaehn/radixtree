@@ -1,7 +1,6 @@
 package com.rklaehn.radixtree
 
-import algebra.Eq
-import cats.kernel.Hash
+import cats.kernel.{Eq, Hash}
 
 import scala.util.hashing.MurmurHash3
 
